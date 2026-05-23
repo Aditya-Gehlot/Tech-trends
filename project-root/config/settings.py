@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Base paths
 BASE_DIR = Path(__file__).resolve().parents[1]
+load_dotenv(BASE_DIR / ".env")
 STATE_DIR = Path(os.environ.get("STATE_DIR", BASE_DIR / ".state"))
 STATE_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -32,6 +34,16 @@ PYTRENDS_KEYWORDS = os.environ.get("PYTRENDS_KEYWORDS", "python,rust,go,kubernet
 
 # Optional tokens
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
+
+# S3 / object storage
+RAW_S3_BUCKET = os.environ.get("RAW_S3_BUCKET")
+RAW_S3_PREFIX = os.environ.get("RAW_S3_PREFIX", "raw")
+RAW_S3_REGION = os.environ.get("RAW_S3_REGION", "us-east-1")
+RAW_S3_ENDPOINT_URL = os.environ.get("RAW_S3_ENDPOINT_URL")
+RAW_S3_ACCESS_KEY_ID = os.environ.get("RAW_S3_ACCESS_KEY_ID")
+RAW_S3_SECRET_ACCESS_KEY = os.environ.get("RAW_S3_SECRET_ACCESS_KEY")
+RAW_S3_BATCH_SIZE = int(os.environ.get("RAW_S3_BATCH_SIZE", 100))
+RAW_S3_FLUSH_INTERVAL = int(os.environ.get("RAW_S3_FLUSH_INTERVAL", 60))
 
 # Logging
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")

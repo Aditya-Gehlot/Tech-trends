@@ -13,6 +13,7 @@ from producers.stackoverflow_producer import StackOverflowProducer
 from producers.github_producer import GitHubProducer
 from producers.blog_producer import BlogProducer
 from consumers.base_consumer import BaseConsumer
+from consumers.s3_raw_consumer import S3RawConsumer
 
 
 def run_producer_class(cls):
@@ -29,6 +30,7 @@ def main():
     parser.add_argument("--github", action="store_true")
     parser.add_argument("--blogs", action="store_true")
     parser.add_argument("--consumer", action="store_true", help="Run a consumer that prints messages")
+    parser.add_argument("--s3-raw-consumer", action="store_true", help="Run a consumer that writes raw Kafka messages to S3")
     args = parser.parse_args()
 
     threads = []
@@ -46,6 +48,9 @@ def main():
         threads.append(t)
     if args.consumer:
         t = threading.Thread(target=lambda: BaseConsumer().run(), daemon=True)
+        threads.append(t)
+    if args.s3_raw_consumer:
+        t = threading.Thread(target=lambda: S3RawConsumer().run(), daemon=True)
         threads.append(t)
 
     if not threads:
