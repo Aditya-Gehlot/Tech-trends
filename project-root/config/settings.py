@@ -30,7 +30,10 @@ GITHUB_EVENTS_URL = os.environ.get("GITHUB_EVENTS_URL", "https://api.github.com/
 BLOG_FEEDS = os.environ.get("BLOG_FEEDS", "https://dev.to/feed").split(",")
 
 # Pytrends keywords (comma separated list)
-PYTRENDS_KEYWORDS = os.environ.get("PYTRENDS_KEYWORDS", "python,rust,go,kubernetes,docker,spark").split(",")
+PYTRENDS_KEYWORDS = os.environ.get("PYTRENDS_KEYWORDS", "python,rust,kubernetes,docker,spark").split(",")
+PYTRENDS_TIMEOUT_SECONDS = int(os.environ.get("PYTRENDS_TIMEOUT_SECONDS", 10))
+PYTRENDS_RETRIES = int(os.environ.get("PYTRENDS_RETRIES", 2))
+PYTRENDS_BACKOFF_FACTOR = float(os.environ.get("PYTRENDS_BACKOFF_FACTOR", 0.5))
 
 # Optional tokens
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
