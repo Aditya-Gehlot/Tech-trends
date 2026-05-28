@@ -71,6 +71,57 @@ def percent(value_: Any) -> str:
         return "-"
 
 
+def as_number(series: pd.Series, default: float = 0.0) -> pd.Series:
+    return pd.to_numeric(series, errors="coerce").fillna(default)
+
+
+def add_percent_column(df: pd.DataFrame, source: str, target: str) -> pd.DataFrame:
+    frame = df.copy()
+    if source in frame.columns:
+        values = as_number(frame[source])
+        frame[target] = values.where(values.abs() > 1, values * 100)
+    return frame
+
+
+def add_salary_k_column(df: pd.DataFrame, source: str, target: str) -> pd.DataFrame:
+    frame = df.copy()
+    if source in frame.columns:
+        frame[target] = as_number(frame[source]) / 1000
+    return frame
+
+
+def style_chart(fig: go.Figure, x_title: str | None = None, y_title: str | None = None) -> go.Figure:
+    fig.update_layout(
+        xaxis_title=x_title,
+        yaxis_title=y_title,
+        legend_title_text="",
+        margin=dict(l=20, r=20, t=60, b=20),
+    )
+    return fig
+
+
+def horizontal_bar(
+    df: pd.DataFrame,
+    x: str,
+    y: str,
+    title: str,
+    x_title: str,
+    color: str | None = None,
+    text: str | None = None,
+):
+    frame = df.sort_values(x, ascending=True)
+    fig = px.bar(frame, x=x, y=y, orientation="h", color=color, text=text, title=title)
+    if text:
+        fig.update_traces(texttemplate="%{text}", textposition="outside", cliponaxis=False)
+    return style_chart(fig, x_title=x_title, y_title="")
+
+
+def donut(df: pd.DataFrame, names: str, values_col: str, title: str):
+    fig = px.pie(df, names=names, values=values_col, hole=0.45, title=title)
+    fig.update_traces(textposition="inside", textinfo="percent+label")
+    return style_chart(fig)
+
+
 def metric_cards(items: list[tuple[str, Any]], columns: int = 4) -> None:
     cols = st.columns(columns)
     for idx, (label, item_value) in enumerate(items):
@@ -286,9 +337,39 @@ def render_analytics_error(exc: Exception) -> None:
 def render_overview_card(title: str, item: Dict[str, Any], value_key: str = "name", detail_keys: list[str] | None = None) -> None:
     detail_keys = detail_keys or []
     st.metric(title, value(item.get(value_key)))
-    details = {key: item.get(key) for key in detail_keys if item.get(key) is not None}
+    labels = {
+        "growth_7d": "7d growth",
+        "growth_mom": "salary MoM",
+        "confidence": "confidence",
+        "opportunity_score": "opportunity score",
+        "market_cap_proxy": "market proxy",
+        "company_count": "companies",
+        "avg_salary": "avg salary",
+        "experience_premium": "senior premium",
+        "job_postings_7d": "jobs in 7d",
+        "hiring_velocity": "hiring index",
+        "unique_company_count": "hiring companies",
+        "ecosystem_dependency_score": "dependency score",
+        "maturity_badge": "maturity",
+        "decline_rate": "decline",
+        "legacy_adoption_remaining": "legacy adoption",
+        "trend_class": "trend",
+    }
+    percent_keys = {"growth_7d", "growth_mom", "confidence", "decline_rate", "legacy_adoption_remaining"}
+    money_keys = {"avg_salary", "experience_premium", "market_cap_proxy"}
+    details = {}
+    for key in detail_keys:
+        raw = item.get(key)
+        if raw is None:
+            continue
+        if key in percent_keys:
+            details[labels.get(key, key)] = percent(raw)
+        elif key in money_keys:
+            details[labels.get(key, key)] = f"${float(raw):,.0f}"
+        else:
+            details[labels.get(key, key)] = value(raw)
     if details:
-        st.caption(" | ".join(f"{key}: {value(val)}" for key, val in details.items()))
+        st.caption(" | ".join(f"{key}: {val}" for key, val in details.items()))
 
 
 def plotly_empty_notice(df: pd.DataFrame, message: str) -> bool:
@@ -625,20 +706,28 @@ with tabs[6]:
                     render_overview_card(title, payload, detail_keys=details)
 
         growth_payload = api_v1_get("/analytics/growth-matrix?limit=60")
-        growth_df = records_df(growth_payload, "technologies")
+        growth_df = add_percent_column(records_df(growth_payload, "technologies"), "growth_rate", "growth_percent")
         if not plotly_empty_notice(growth_df, "No growth matrix rows are available from the database."):
-            st.plotly_chart(
-                px.scatter(
-                    growth_df,
-                    x="popularity_score",
-                    y="growth_rate",
-                    size="hiring_demand",
-                    color="trend_class",
-                    hover_name="name",
-                    title="Technology Growth Matrix",
-                ),
-                use_container_width=True,
-            )
+            left, right = st.columns([2, 1])
+            with left:
+                top_growth = growth_df.sort_values("growth_percent", ascending=False).head(12).copy()
+                top_growth["growth_label"] = top_growth["growth_percent"].map(lambda v: f"{v:.1f}%")
+                st.plotly_chart(
+                    horizontal_bar(
+                        top_growth,
+                        x="growth_percent",
+                        y="name",
+                        color="trend_class",
+                        text="growth_label",
+                        title="Fastest-growing technologies",
+                        x_title="Growth over latest period (%)",
+                    ),
+                    use_container_width=True,
+                )
+            with right:
+                trend_counts = growth_df["trend_class"].fillna("unknown").value_counts().reset_index()
+                trend_counts.columns = ["trend", "technologies"]
+                st.plotly_chart(donut(trend_counts, "trend", "technologies", "Trend mix"), use_container_width=True)
             st.dataframe(growth_df, use_container_width=True, hide_index=True)
     except Exception as exc:
         render_analytics_error(exc)
@@ -648,32 +737,34 @@ with tabs[7]:
     try:
         limit = st.slider("Growth matrix technologies", 10, 120, 50, key="growth_limit")
         growth_payload = api_v1_get(f"/analytics/growth-matrix?limit={limit}")
-        growth_df = records_df(growth_payload, "technologies")
+        growth_df = add_percent_column(records_df(growth_payload, "technologies"), "growth_rate", "growth_percent")
         if not plotly_empty_notice(growth_df, "No growth data is available from PostgreSQL."):
+            top_popularity = growth_df.sort_values("popularity_score", ascending=False).head(15).copy()
             st.plotly_chart(
-                px.scatter(
-                    growth_df,
+                horizontal_bar(
+                    top_popularity,
                     x="popularity_score",
-                    y="growth_rate",
-                    size="hiring_demand",
+                    y="name",
                     color="trend_class",
-                    hover_name="name",
-                    title="Popularity vs Growth",
+                    title="Most popular technologies",
+                    x_title="Popularity score (0-100 index)",
                 ),
                 use_container_width=True,
             )
 
         leaders = api_v1_get("/analytics/leaderboards?metric=growth&period=qoq&limit=20")
-        leader_df = records_df(leaders, "rankings")
+        leader_df = add_percent_column(records_df(leaders, "rankings"), "growth_pct", "growth_percent")
         if not leader_df.empty:
+            leader_df["growth_label"] = leader_df["growth_percent"].map(lambda v: f"{v:.1f}%")
             st.plotly_chart(
-                px.bar(
-                    leader_df.sort_values("growth_pct"),
-                    x="growth_pct",
+                horizontal_bar(
+                    leader_df.sort_values("growth_percent"),
+                    x="growth_percent",
                     y="name",
-                    orientation="h",
-                    color="growth_pct",
+                    color="growth_percent",
+                    text="growth_label",
                     title="Quarter-over-quarter growth leaders",
+                    x_title="Quarter-over-quarter growth (%)",
                 ),
                 use_container_width=True,
             )
@@ -690,8 +781,20 @@ with tabs[8]:
             salary_cols = [col for col in ["salary_entry", "salary_mid", "salary_senior"] if col in salary_df.columns]
             if salary_cols:
                 salary_melt = salary_df.melt(id_vars=["name"], value_vars=salary_cols, var_name="experience_level", value_name="salary")
+                salary_melt["salary_k"] = as_number(salary_melt["salary"]) / 1000
                 st.plotly_chart(
-                    px.bar(salary_melt, x="name", y="salary", color="experience_level", barmode="group", title="Salary tiers by technology"),
+                    style_chart(
+                        px.bar(
+                            salary_melt,
+                            x="name",
+                            y="salary_k",
+                            color="experience_level",
+                            barmode="group",
+                            title="Average salary by experience level",
+                        ),
+                        x_title="Technology",
+                        y_title="Average salary (USD thousands)",
+                    ),
                     use_container_width=True,
                 )
             st.dataframe(salary_df, use_container_width=True, hide_index=True)
@@ -700,8 +803,15 @@ with tabs[8]:
         velocity_df = records_df(velocity_payload, "technologies")
         if not velocity_df.empty:
             velocity_df["date"] = pd.to_datetime(velocity_df["date"], errors="coerce")
+            hiring_totals = velocity_df.groupby("name", as_index=False)["job_postings"].sum().sort_values("job_postings", ascending=False)
             st.plotly_chart(
-                px.line(velocity_df, x="date", y="job_postings", color="name", title="Hiring velocity over time"),
+                horizontal_bar(
+                    hiring_totals,
+                    x="job_postings",
+                    y="name",
+                    title="Hiring demand in the selected period",
+                    x_title="Job postings",
+                ),
                 use_container_width=True,
             )
     except Exception as exc:
@@ -716,12 +826,13 @@ with tabs[9]:
             edges_df = records_df(eco_payload, "edges")
             if not nodes_df.empty:
                 st.plotly_chart(
-                    px.bar(
+                    horizontal_bar(
                         nodes_df.sort_values("criticality_score", ascending=False).head(25),
-                        x="label",
-                        y="criticality_score",
+                        x="criticality_score",
+                        y="label",
                         color="trend_class",
                         title="Critical ecosystem components",
+                        x_title="Dependency score (higher means more central)",
                     ),
                     use_container_width=True,
                 )
@@ -732,8 +843,18 @@ with tabs[9]:
         co_payload = api_v1_get("/analytics/tech-cooccurrence?limit=50")
         co_df = records_df(co_payload, "matrix")
         if not co_df.empty:
-            pivot = co_df.pivot_table(index="tech1", columns="tech2", values="cooccurrence_score", fill_value=0)
-            st.plotly_chart(px.imshow(pivot, title="Technology co-occurrence heatmap"), use_container_width=True)
+            co_df["pair"] = co_df["tech1"].astype(str) + " + " + co_df["tech2"].astype(str)
+            co_df = add_percent_column(co_df, "cooccurrence_score", "cooccurrence_percent")
+            st.plotly_chart(
+                horizontal_bar(
+                    co_df.sort_values("cooccurrence_percent", ascending=False).head(20),
+                    x="cooccurrence_percent",
+                    y="pair",
+                    title="Most common technology pairings",
+                    x_title="Co-occurrence strength (%)",
+                ),
+                use_container_width=True,
+            )
     except Exception as exc:
         render_analytics_error(exc)
 
@@ -743,18 +864,24 @@ with tabs[10]:
         lifecycle_payload = api_v1_get("/analytics/lifecycle?limit=80")
         lifecycle_df = records_df(lifecycle_payload, "technologies")
         if not plotly_empty_notice(lifecycle_df, "No lifecycle analytics are available from PostgreSQL."):
-            st.plotly_chart(
-                px.scatter(
-                    lifecycle_df,
-                    x="years_in_market",
-                    y="hype_score",
-                    size="adoption",
-                    color="adoption_stage",
-                    hover_name="name",
-                    title="Technology lifecycle positioning",
-                ),
-                use_container_width=True,
-            )
+            left, right = st.columns([1, 2])
+            with left:
+                stage_counts = lifecycle_df["adoption_stage"].fillna("unknown").value_counts().reset_index()
+                stage_counts.columns = ["stage", "technologies"]
+                st.plotly_chart(donut(stage_counts, "stage", "technologies", "Lifecycle stage mix"), use_container_width=True)
+            with right:
+                top_adoption = lifecycle_df.sort_values("adoption", ascending=False).head(15)
+                st.plotly_chart(
+                    horizontal_bar(
+                        top_adoption,
+                        x="adoption",
+                        y="name",
+                        color="adoption_stage",
+                        title="Highest-adoption technologies",
+                        x_title="Adoption score (0-100 index)",
+                    ),
+                    use_container_width=True,
+                )
             st.dataframe(lifecycle_df, use_container_width=True, hide_index=True)
     except Exception as exc:
         render_analytics_error(exc)
@@ -765,24 +892,31 @@ with tabs[11]:
         risk_payload = api_v1_get("/analytics/risk-opportunity?limit=80")
         risk_df = records_df(risk_payload, "technologies")
         if not plotly_empty_notice(risk_df, "No risk/opportunity analytics are available from PostgreSQL."):
+            display = risk_df.sort_values("opportunity_score", ascending=False).head(15)
+            score_df = display.melt(id_vars=["name"], value_vars=["risk_score", "opportunity_score"], var_name="score_type", value_name="score")
             st.plotly_chart(
-                px.scatter(
-                    risk_df,
-                    x="risk_score",
-                    y="opportunity_score",
-                    size="market_size",
-                    color="quadrant",
-                    hover_name="name",
-                    title="Risk vs Opportunity Matrix",
+                style_chart(
+                    px.bar(score_df, x="name", y="score", color="score_type", barmode="group", title="Risk and opportunity by technology"),
+                    x_title="Technology",
+                    y_title="Score (0-100 index)",
                 ),
                 use_container_width=True,
             )
+            quadrant_counts = risk_df["quadrant"].fillna("unknown").value_counts().reset_index()
+            quadrant_counts.columns = ["quadrant", "technologies"]
+            st.plotly_chart(donut(quadrant_counts, "quadrant", "technologies", "Risk/opportunity category mix"), use_container_width=True)
 
         stability_payload = api_v1_get("/analytics/stability?limit=25")
         stability_df = records_df(stability_payload, "technologies")
         if not stability_df.empty:
             st.plotly_chart(
-                px.bar(stability_df.sort_values("stability_score"), x="stability_score", y="name", orientation="h", title="Volatility & stability index"),
+                horizontal_bar(
+                    stability_df.sort_values("stability_score"),
+                    x="stability_score",
+                    y="name",
+                    title="Most stable technologies",
+                    x_title="Stability score (0-100 index)",
+                ),
                 use_container_width=True,
             )
     except Exception as exc:
@@ -796,8 +930,25 @@ with tabs[12]:
         regional_payload = api_v1_get(f"/analytics/regional?limit=30{country_query}")
         regional_df = records_df(regional_payload, "hiring_demand_by_tech")
         if not plotly_empty_notice(regional_df, "No regional hiring analytics are available from PostgreSQL."):
+            regional_df = add_salary_k_column(regional_df, "avg_salary", "avg_salary_k")
             st.plotly_chart(
-                px.bar(regional_df, x="name", y="job_postings", color="avg_salary", title="Hiring demand by technology and region"),
+                horizontal_bar(
+                    regional_df.sort_values("job_postings", ascending=False).head(20),
+                    x="job_postings",
+                    y="name",
+                    title="Hiring demand by technology",
+                    x_title="Job postings",
+                ),
+                use_container_width=True,
+            )
+            st.plotly_chart(
+                horizontal_bar(
+                    regional_df.sort_values("avg_salary_k", ascending=False).head(20),
+                    x="avg_salary_k",
+                    y="name",
+                    title="Average salary by technology",
+                    x_title="Average salary (USD thousands)",
+                ),
                 use_container_width=True,
             )
             st.dataframe(regional_df, use_container_width=True, hide_index=True)
@@ -824,12 +975,27 @@ with tabs[13]:
                 comp_df = pd.DataFrame(comparison).T
                 st.dataframe(comp_df, use_container_width=True)
                 if not comp_df.empty:
-                    fig = go.Figure()
-                    categories = comp_df.index.tolist()
-                    for tech in comp_df.columns:
-                        fig.add_trace(go.Scatterpolar(r=comp_df[tech].fillna(0).tolist(), theta=categories, fill="toself", name=tech))
-                    fig.update_layout(title="Technology benchmark radar", polar=dict(radialaxis=dict(visible=True)))
-                    st.plotly_chart(fig, use_container_width=True)
+                    selected_metric = st.selectbox("Metric to chart", options=comp_df.index.tolist(), key="benchmark_chart_metric")
+                    metric_df = comp_df.loc[selected_metric].reset_index()
+                    metric_df.columns = ["technology", "raw_value"]
+                    metric_df["chart_value"] = as_number(metric_df["raw_value"])
+                    x_title = selected_metric
+                    if selected_metric in {"growth", "sentiment", "stability", "adoption", "maturity"}:
+                        metric_df = add_percent_column(metric_df, "chart_value", "chart_value")
+                        x_title = f"{selected_metric.title()} (%)"
+                    if selected_metric == "salary":
+                        metric_df = add_salary_k_column(metric_df, "chart_value", "chart_value")
+                        x_title = "Salary (USD thousands)"
+                    st.plotly_chart(
+                        horizontal_bar(
+                            metric_df,
+                            x="chart_value",
+                            y="technology",
+                            title=f"{selected_metric.title()} comparison",
+                            x_title=x_title,
+                        ),
+                        use_container_width=True,
+                    )
     except Exception as exc:
         render_analytics_error(exc)
 
@@ -837,20 +1003,34 @@ with tabs[14]:
     st.subheader("Talent & Skills")
     try:
         skill_payload = api_v1_get("/analytics/skill-gap?limit=40")
-        skill_df = records_df(skill_payload, "technologies")
+        skill_df = add_percent_column(records_df(skill_payload, "technologies"), "shortage_percentage", "shortage_percent")
         if not plotly_empty_notice(skill_df, "No skill gap analytics are available from PostgreSQL."):
             st.plotly_chart(
-                px.scatter(
-                    skill_df,
-                    x="developer_supply",
-                    y="job_demand",
-                    size="avg_salary",
+                horizontal_bar(
+                    skill_df.sort_values("shortage_percent", ascending=False).head(20),
+                    x="shortage_percent",
+                    y="name",
                     color="gap_severity",
-                    hover_name="name",
-                    title="Skill demand vs supply gap",
+                    title="Largest talent shortages",
+                    x_title="Estimated shortage (%)",
                 ),
                 use_container_width=True,
             )
+            demand_df = skill_df.sort_values("job_demand", ascending=False).head(20)
+            st.plotly_chart(
+                horizontal_bar(
+                    demand_df,
+                    x="job_demand",
+                    y="name",
+                    color="gap_severity",
+                    title="Most requested skills",
+                    x_title="Job postings",
+                ),
+                use_container_width=True,
+            )
+            severity_counts = skill_df["gap_severity"].fillna("unknown").value_counts().reset_index()
+            severity_counts.columns = ["severity", "technologies"]
+            st.plotly_chart(donut(severity_counts, "severity", "technologies", "Skill gap severity mix"), use_container_width=True)
             st.dataframe(skill_df, use_container_width=True, hide_index=True)
     except Exception as exc:
         render_analytics_error(exc)
@@ -865,11 +1045,31 @@ with tabs[15]:
             left, right = st.columns(2)
             with left:
                 if not gainers.empty:
-                    st.plotly_chart(px.bar(gainers, x="name", y="growth_projection", color="confidence", title="Predicted gainers"), use_container_width=True)
+                    gainers = add_percent_column(gainers, "growth_projection", "growth_projection_percent")
+                    st.plotly_chart(
+                        horizontal_bar(
+                            gainers,
+                            x="growth_projection_percent",
+                            y="name",
+                            title="Predicted gainers",
+                            x_title="Projected growth (%)",
+                        ),
+                        use_container_width=True,
+                    )
                     st.dataframe(gainers, use_container_width=True, hide_index=True)
             with right:
                 if not losers.empty:
-                    st.plotly_chart(px.bar(losers, x="name", y="growth_projection", color="confidence", title="Predicted decliners"), use_container_width=True)
+                    losers = add_percent_column(losers, "growth_projection", "growth_projection_percent")
+                    st.plotly_chart(
+                        horizontal_bar(
+                            losers.sort_values("growth_projection_percent", ascending=False),
+                            x="growth_projection_percent",
+                            y="name",
+                            title="Predicted decliners",
+                            x_title="Projected growth (%)",
+                        ),
+                        use_container_width=True,
+                    )
                     st.dataframe(losers, use_container_width=True, hide_index=True)
     except Exception as exc:
         render_analytics_error(exc)
@@ -881,8 +1081,16 @@ with tabs[16]:
         event_df = records_df(event_payload, "events")
         if not plotly_empty_notice(event_df, "No market-event records are available from PostgreSQL."):
             event_df["date"] = pd.to_datetime(event_df["date"], errors="coerce")
+            event_df["event"] = event_df["title"].astype(str).str.slice(0, 60)
             st.plotly_chart(
-                px.scatter(event_df, x="date", y="impact", size="discussion_count", hover_name="title", color="source", title="Market events and sentiment shifts"),
+                horizontal_bar(
+                    event_df.sort_values("impact").tail(20),
+                    x="impact",
+                    y="event",
+                    color="source",
+                    title="Market events by sentiment impact",
+                    x_title="Sentiment impact score",
+                ),
                 use_container_width=True,
             )
             st.dataframe(event_df, use_container_width=True, hide_index=True)
@@ -905,7 +1113,7 @@ with tabs[17]:
                 metric_cards(
                     [
                         ("Popularity", detail_payload.get("current_metrics", {}).get("popularity_score")),
-                        ("Growth", detail_payload.get("current_metrics", {}).get("growth_rate")),
+                        ("Growth", percent(detail_payload.get("current_metrics", {}).get("growth_rate"))),
                         ("Volatility", detail_payload.get("current_metrics", {}).get("volatility")),
                         ("Avg salary", detail_payload.get("current_metrics", {}).get("avg_salary")),
                     ],
@@ -917,8 +1125,28 @@ with tabs[17]:
             ts_df = records_df(ts_payload, "data")
             if not ts_df.empty:
                 ts_df["date"] = pd.to_datetime(ts_df["date"], errors="coerce")
-                value_cols = [col for col in ["popularity", "growth", "hiring", "salary"] if col in ts_df.columns]
-                st.plotly_chart(px.line(ts_df, x="date", y=value_cols, title=f"{tech_name} time series"), use_container_width=True)
+                if "popularity" in ts_df.columns:
+                    st.plotly_chart(
+                        style_chart(px.line(ts_df, x="date", y="popularity", title=f"{tech_name} popularity trend"), "Date", "Popularity score (0-100 index)"),
+                        use_container_width=True,
+                    )
+                if "growth" in ts_df.columns:
+                    ts_growth = add_percent_column(ts_df, "growth", "growth_percent")
+                    st.plotly_chart(
+                        style_chart(px.line(ts_growth, x="date", y="growth_percent", title=f"{tech_name} growth trend"), "Date", "Growth (%)"),
+                        use_container_width=True,
+                    )
+                if "hiring" in ts_df.columns:
+                    st.plotly_chart(
+                        style_chart(px.bar(ts_df, x="date", y="hiring", title=f"{tech_name} hiring demand"), "Date", "Job postings"),
+                        use_container_width=True,
+                    )
+                if "salary" in ts_df.columns:
+                    ts_salary = add_salary_k_column(ts_df, "salary", "salary_k")
+                    st.plotly_chart(
+                        style_chart(px.line(ts_salary, x="date", y="salary_k", title=f"{tech_name} salary trend"), "Date", "Average salary (USD thousands)"),
+                        use_container_width=True,
+                    )
 
             regional_payload = api_v1_get(f"/technology/{encoded_name}/regional-comparison")
             regions = regional_payload.get("regions", {}) if regional_payload else {}
