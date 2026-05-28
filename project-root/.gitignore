@@ -51,3 +51,4 @@ ml/artifacts/
 # Logs
 *.log
 logs/
+Data/ 
