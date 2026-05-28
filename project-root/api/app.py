@@ -12,6 +12,7 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from api import analytics_service
 from config import settings
 from pipeline.runner import PipelineRunError, get_runner, get_store
 
@@ -44,6 +45,13 @@ class PipelineRunRequest(BaseModel):
     scale: float = 1.0
     seed: int = 20260526
     formats: list[str] = Field(default_factory=lambda: ["csv", "parquet", "ndjson", "es"])
+
+
+class AnalyticsCompareRequest(BaseModel):
+    techs: list[str] = Field(min_length=1, max_length=10)
+    metrics: list[str] = Field(
+        default_factory=lambda: ["salary", "growth", "hiring", "github", "sentiment", "stability", "adoption", "maturity"]
+    )
 
 
 def _jsonable(value: Any) -> Any:
@@ -81,7 +89,7 @@ def _load_latest_model() -> Optional[Any]:
     model_dir = Path(settings.ML_MODELS_DIR)
     if not model_dir.exists():
         return None
-    models = sorted(model_dir.glob("*.joblib"), key=lambda p: p.stat().st_mtime, reverse=True)
+    models = sorted(model_dir.glob("model_*.joblib"), key=lambda p: p.stat().st_mtime, reverse=True)
     if not models:
         return None
     try:
@@ -439,6 +447,109 @@ def models_latest():
         "feature_importances": model.get("feature_importances"),
         "has_regression_model": model.get("regression_model") is not None,
     }
+
+
+@app.get("/api/v1/market/overview")
+def api_v1_market_overview():
+    return analytics_service.market_overview()
+
+
+@app.get("/api/v1/analytics/growth-matrix")
+def api_v1_growth_matrix(limit: int = Query(50, ge=1, le=200)):
+    return analytics_service.growth_matrix(limit=limit)
+
+
+@app.get("/api/v1/analytics/salary")
+def api_v1_salary(limit: int = Query(20, ge=1, le=100), sort_by: str = "avg_salary"):
+    return analytics_service.salary_analysis(limit=limit, sort_by=sort_by)
+
+
+@app.get("/api/v1/analytics/hiring-velocity")
+def api_v1_hiring_velocity(limit: int = Query(20, ge=1, le=100), days: int = Query(60, ge=7, le=365)):
+    return analytics_service.hiring_velocity(limit=limit, days=days)
+
+
+@app.get("/api/v1/analytics/ecosystem-dependencies")
+def api_v1_ecosystem_dependencies(depth: int = Query(2, ge=1, le=4)):
+    return analytics_service.ecosystem_dependencies(depth=depth)
+
+
+@app.get("/api/v1/analytics/leaderboards")
+def api_v1_leaderboards(
+    metric: str = Query("growth"),
+    period: str = Query("qoq"),
+    limit: int = Query(15, ge=1, le=100),
+):
+    return analytics_service.leaderboards(metric=metric, period=period, limit=limit)
+
+
+@app.get("/api/v1/analytics/stability")
+def api_v1_stability(limit: int = Query(25, ge=1, le=100)):
+    return analytics_service.stability(limit=limit)
+
+
+@app.get("/api/v1/analytics/regional")
+def api_v1_regional(country: Optional[str] = None, limit: int = Query(20, ge=1, le=100)):
+    return analytics_service.regional(country=country, limit=limit)
+
+
+@app.get("/api/v1/analytics/tech-cooccurrence")
+def api_v1_tech_cooccurrence(limit: int = Query(30, ge=1, le=200)):
+    return analytics_service.tech_cooccurrence(limit=limit)
+
+
+@app.get("/api/v1/analytics/lifecycle")
+def api_v1_lifecycle(limit: int = Query(50, ge=1, le=200)):
+    return analytics_service.lifecycle(limit=limit)
+
+
+@app.get("/api/v1/analytics/risk-opportunity")
+def api_v1_risk_opportunity(limit: int = Query(50, ge=1, le=200)):
+    return analytics_service.risk_opportunity(limit=limit)
+
+
+@app.get("/api/v1/analytics/skill-gap")
+def api_v1_skill_gap(limit: int = Query(20, ge=1, le=100)):
+    return analytics_service.skill_gap(limit=limit)
+
+
+@app.get("/api/v1/analytics/forecast-leaderboards")
+def api_v1_forecast_leaderboards(period: str = Query("6_months"), limit: int = Query(15, ge=1, le=100)):
+    return analytics_service.forecast_leaderboards(period=period, limit=limit)
+
+
+@app.get("/api/v1/analytics/events-timeline")
+def api_v1_events_timeline(days: int = Query(90, ge=7, le=365)):
+    return analytics_service.events_timeline(days=days)
+
+
+@app.post("/api/v1/analytics/compare")
+def api_v1_compare(request: AnalyticsCompareRequest):
+    return analytics_service.compare(techs=request.techs, metrics=request.metrics)
+
+
+@app.get("/api/v1/technology/{name}/detail")
+def api_v1_technology_detail(name: str):
+    return analytics_service.technology_detail(name)
+
+
+@app.get("/api/v1/technology/{name}/timeseries")
+def api_v1_technology_timeseries(
+    name: str,
+    days: int = Query(90, ge=7, le=365),
+    metrics: Optional[str] = Query(None),
+):
+    return analytics_service.technology_timeseries(name=name, days=days, metrics=metrics)
+
+
+@app.get("/api/v1/technology/{name}/regional-comparison")
+def api_v1_technology_regional_comparison(name: str):
+    return analytics_service.technology_regional_comparison(name)
+
+
+@app.get("/api/v1/technology/{name}/skill-combinations")
+def api_v1_technology_skill_combinations(name: str):
+    return analytics_service.technology_skill_combinations(name)
 
 
 @app.get("/forecast/{name:path}", response_model=TrendResponse)

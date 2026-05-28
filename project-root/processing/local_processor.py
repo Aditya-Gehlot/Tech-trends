@@ -293,6 +293,14 @@ class LocalProcessor:
             return value.item()
         return value
 
+    def _has_value(self, value: Any) -> bool:
+        if value is None:
+            return False
+        try:
+            return not bool(pd.isna(value))
+        except Exception:
+            return True
+
     def _raw_dict(self, row: pd.Series) -> Dict[str, Any]:
         return {str(k): self._native_value(v) for k, v in row.to_dict().items()}
 
@@ -323,7 +331,7 @@ class LocalProcessor:
             return 0
 
         timestamp_col = config["timestamp_col"]
-        df = pd.read_csv(path, parse_dates=[timestamp_col], keep_default_na=True)
+        df = pd.read_csv(path, parse_dates=[timestamp_col], keep_default_na=True, low_memory=False)
         df[timestamp_col] = pd.to_datetime(df[timestamp_col], errors="coerce")
 
         required = [timestamp_col]
@@ -345,7 +353,7 @@ class LocalProcessor:
         text_col = config.get("text_col")
         url_col = config.get("url_col")
 
-        for _, row in df.iterrows():
+        for row in df.to_dict(orient="records"):
             techs: List[str] = []
             self._append_values(techs, (row.get(col) for col in topic_cols if col in row))
             self._append_values(techs, (row.get(col) for col in tech_list_cols if col in row))
@@ -355,18 +363,19 @@ class LocalProcessor:
             tags: List[str] = []
             self._append_values(tags, (row.get(col) for col in tag_cols if col in row))
 
-            record = NormalizedRecord(
-                source=source,
-                id=self._make_id(source, row, config),
-                timestamp=row.get(timestamp_col) if pd.notna(row.get(timestamp_col)) else datetime.now(timezone.utc),
-                title=str(row.get(title_col)) if title_col and pd.notna(row.get(title_col)) else None,
-                text=str(row.get(text_col)) if text_col and pd.notna(row.get(text_col)) else None,
-                tags=tags,
-                url=str(row.get(url_col)) if url_col and pd.notna(row.get(url_col)) else None,
-                techs=techs,
-                raw=self._raw_dict(row),
+            rows.append(
+                {
+                    "source": source,
+                    "id": self._make_id(source, row, config),
+                    "timestamp": row.get(timestamp_col) if self._has_value(row.get(timestamp_col)) else datetime.now(timezone.utc),
+                    "title": str(row.get(title_col)) if title_col and self._has_value(row.get(title_col)) else None,
+                    "text": str(row.get(text_col)) if text_col and self._has_value(row.get(text_col)) else None,
+                    "tags": tags,
+                    "url": str(row.get(url_col)) if url_col and self._has_value(row.get(url_col)) else None,
+                    "techs": techs,
+                    "raw": {str(k): self._native_value(v) for k, v in row.items()},
+                }
             )
-            rows.append(self._record_dict(record))
 
         return self._write_partitioned(pd.DataFrame(rows), source)
 

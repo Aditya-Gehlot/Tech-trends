@@ -4,7 +4,7 @@ This catalog documents the synthetic datasets generated for TechTrends. The data
 
 ## linkedin_jobs.csv
 
-Rows: `54562`
+Rows: `60106`
 
 ### Schema
 
@@ -29,52 +29,60 @@ Rows: `54562`
 [
   {
     "job_id": "JOB-100000",
-    "posted_at": "2025-01-02T08:00:00",
+    "posted_at": "2025-01-01T08:00:00",
     "company": "OpenAI",
     "role": "Applied Scientist",
-    "location": "Austin",
-    "salary_usd": 194784.0,
-    "experience_years": 9,
-    "skills": "Prompt Engineering, Inference, Serving, PyTorch, Diffusion",
-    "job_description": "OpenAI is hiring a Applied Scientist in Austin to scale generative ai initiatives across enterprise and developer workflows. The team is focused on data platform integration while supporting regional go-to-market launches. Candidates should be comfortable with Prompt Engineering, Inference, Serving and cross-functional delivery in a fast-moving market.",
+    "location": "New York",
+    "salary_usd": 169683.0,
+    "experience_years": 2,
+    "skills": "FastAPI, RAG, Tool Calling, OpenAI API, LangChain",
+    "job_description": "OpenAI is hiring a Applied Scientist in New York to scale ai agents initiatives across enterprise and developer workflows. The team is focused on agent reliability while supporting production customers. Candidates should be comfortable with FastAPI, RAG, Tool Calling and cross-functional delivery in a fast-moving market.",
     "company_id": "CMP-001",
     "country": "United States",
     "region": "North America",
-    "tech_category": "Generative AI",
-    "hiring_index": 72.82,
+    "tech_category": "AI Agents",
+    "hiring_index": 75.33,
     "funding_signal": 1.13,
-    "sentiment_score": 0.189,
-    "trend_score": 57.27,
-    "popularity_growth_pct": -1.19,
-    "volatility_metric": 8.93,
-    "innovation_score": 88.07,
-    "adoption_score": 69.1,
+    "sentiment_score": 0.225,
+    "trend_score": 57.87,
+    "popularity_growth_pct": 1.79,
+    "volatility_metric": 7.63,
+    "innovation_score": 89.21,
+    "adoption_score": 71.09,
     "risk_indicator": "low",
+    "job_market_demand_index": 86.18,
+    "education_enrollment_index": 74.75,
+    "community_health_score": 61.69,
+    "package_downloads_weekly": 3549401,
     "source_platform": "LinkedIn"
   },
   {
     "job_id": "JOB-100001",
-    "posted_at": "2025-01-02T08:00:00",
+    "posted_at": "2025-01-01T20:00:00",
     "company": "OpenAI",
-    "role": "Generative AI Product Engineer",
-    "location": "New York",
-    "salary_usd": 185097.0,
-    "experience_years": 4,
-    "skills": "Diffusion, Serving, Inference, Prompt Engineering, PyTorch",
-    "job_description": "OpenAI is hiring a Generative AI Product Engineer in New York to scale generative ai initiatives across enterprise and developer workflows. The team is focused on cost-efficient inference while supporting production customers. Candidates should be comfortable with Diffusion, Serving, Inference and cross-functional delivery in a fast-moving market.",
+    "role": "AI Solutions Architect",
+    "location": "Seattle",
+    "salary_usd": 190914.0,
+    "experience_years": 6,
+    "skills": "Snowflake, Databricks, Governance, Security, Azure",
+    "job_description": "OpenAI is hiring a AI Solutions Architect in Seattle to scale enterprise ai initiatives across enterprise and developer workflows. The team is focused on agent reliability while supporting open-source contributors. Candidates should be comfortable with Snowflake, Databricks, Governance and cross-functional delivery in a fast-moving market.",
     "company_id": "CMP-001",
     "country": "United States",
     "region": "North America",
-    "tech_category": "Generative AI",
-    "hiring_index": 72.82,
+    "tech_category": "Enterprise AI",
+    "hiring_index": 75.33,
     "funding_signal": 1.13,
-    "sentiment_score": 0.189,
-    "trend_score": 57.27,
-    "popularity_growth_pct": -1.19,
-    "volatility_metric": 8.93,
-    "innovation_score": 88.07,
-    "adoption_score": 69.1,
+    "sentiment_score": 0.225,
+    "trend_score": 57.87,
+    "popularity_growth_pct": 1.79,
+    "volatility_metric": 7.63,
+    "innovation_score": 89.21,
+    "adoption_score": 71.09,
     "risk_indicator": "low",
+    "job_market_demand_index": 86.18,
+    "education_enrollment_index": 74.75,
+    "community_health_score": 61.69,
+    "package_downloads_weekly": 3549401,
     "source_platform": "LinkedIn"
   }
 ]
@@ -94,7 +102,7 @@ Rows: `54562`
 
 ## twitter_stream.csv
 
-Rows: `54182`
+Rows: `174620`
 
 ### Schema
 
@@ -117,57 +125,73 @@ Rows: `54182`
 [
   {
     "tweet_id": "TWT-200000",
-    "created_at": "2025-01-01T06:55:00",
-    "username": "ml_26824",
-    "followers": 17343,
+    "created_at": "2025-01-01T10:55:00",
+    "username": "vector_32127",
+    "followers": 4209,
     "tech_topic": "AI Agents",
-    "sentiment": "negative",
-    "likes": 3207,
-    "retweets": 891,
-    "content": "Cursor keeps showing up in AI Agents discussions as teams focus on developer adoption. #AIAgents #US #cursor",
-    "company_id": "CMP-013",
-    "company": "Cursor",
+    "sentiment": null,
+    "likes": 2676,
+    "retweets": 701,
+    "content": "Scale AI keeps showing up in AI Agents discussions as teams focus on GPU capacity. #AIAgents #US #scaleai",
+    "company_id": "CMP-009",
+    "company": "Scale AI",
     "country": "United States",
     "region": "North America",
     "trend_score": 51.72,
-    "sentiment_score": -0.204,
-    "funding_estimate_musd": 158.52,
-    "hiring_activity_index": 49.66,
-    "hashtags": "#AIAgents|#US|#cursor",
+    "sentiment_score": 0.19,
+    "funding_estimate_musd": 172.12,
+    "hiring_activity_index": 49.7,
+    "hashtags": "#AIAgents|#US|#scaleai",
     "popularity_growth_pct": 0.6,
     "volatility_metric": 6.76,
-    "ai_summary": "Cursor teams are discussing how ai agents is moving from experimentation into production buying cycles. Interest is still present, but reliability, cost, and security concerns are slowing near-term expansion for some teams.",
+    "package_downloads_weekly": 2071173,
+    "github_activity_index": 61.03,
+    "stackoverflow_question_volume": 9,
+    "job_market_demand_index": 86.62,
+    "education_enrollment_index": 82.13,
+    "conference_talks": 15,
+    "documentation_health_score": 87.47,
+    "community_health_score": 59.66,
+    "ai_summary": "Analysts note that ai agents usage patterns on Jan 01, 2025 reflect both hype and practical deployment pressure. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
     "risk_indicator": "low",
-    "innovation_score": 89.73,
-    "adoption_score": 63.67,
-    "source_reference": "https://x.example.com/CMP-013/200000"
+    "innovation_score": 88.51,
+    "adoption_score": 67.29,
+    "source_reference": "https://x.example.com/CMP-009/200000"
   },
   {
     "tweet_id": "TWT-200001",
-    "created_at": "2025-01-01T23:28:00",
-    "username": "data_11366",
-    "followers": 15509,
+    "created_at": "2025-01-01T16:00:00",
+    "username": "ml_88901",
+    "followers": 4652,
     "tech_topic": "AI Agents",
     "sentiment": "positive",
-    "likes": 3408,
-    "retweets": 1329,
-    "content": "Windsurf keeps showing up in AI Agents discussions as teams focus on developer adoption. #AIAgents #US #windsurf",
-    "company_id": "CMP-015",
-    "company": "Windsurf",
-    "country": "United States",
-    "region": "North America",
-    "trend_score": 51.72,
-    "sentiment_score": 0.399,
-    "funding_estimate_musd": 188.04,
-    "hiring_activity_index": 57.73,
-    "hashtags": "#AIAgents|#US|#windsurf",
-    "popularity_growth_pct": 0.6,
-    "volatility_metric": 6.76,
-    "ai_summary": "Analysts note that ai agents usage patterns on Jan 01, 2025 reflect both hype and practical deployment pressure. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
+    "likes": 2528,
+    "retweets": 771,
+    "content": "OpenAI keeps showing up in AI Agents discussions as teams focus on cost-efficient deployment. #AIAgents #JP #openai",
+    "company_id": "CMP-001",
+    "company": "OpenAI",
+    "country": "Japan",
+    "region": "Asia",
+    "trend_score": 45.74,
+    "sentiment_score": 0.215,
+    "funding_estimate_musd": 165.53,
+    "hiring_activity_index": 53.28,
+    "hashtags": "#AIAgents|#JP|#openai",
+    "popularity_growth_pct": 4.32,
+    "volatility_metric": 8.36,
+    "package_downloads_weekly": 2828318,
+    "github_activity_index": 53.97,
+    "stackoverflow_question_volume": 28,
+    "job_market_demand_index": 82.32,
+    "education_enrollment_index": 78.84,
+    "conference_talks": 13,
+    "documentation_health_score": 78.55,
+    "community_health_score": 63.84,
+    "ai_summary": "OpenAI teams are discussing how ai agents is moving from experimentation into production buying cycles. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
     "risk_indicator": "low",
-    "innovation_score": 89.73,
-    "adoption_score": 63.67,
-    "source_reference": "https://x.example.com/CMP-015/200001"
+    "innovation_score": 90.55,
+    "adoption_score": 69.94,
+    "source_reference": "https://x.example.com/CMP-001/200001"
   }
 ]
 ```
@@ -186,7 +210,7 @@ Rows: `54182`
 
 ## github_events.csv
 
-Rows: `33002`
+Rows: `38552`
 
 ### Schema
 
@@ -207,51 +231,59 @@ Rows: `33002`
 [
   {
     "event_id": "GIT-300000",
-    "event_time": "2025-01-06T00:00:00",
-    "repository": "openai/llm-starter",
+    "event_time": "2025-01-01T00:00:00",
+    "repository": "openai/ai-agents-ops",
     "language": "Python",
-    "stars_added": 295,
-    "forks_added": 93,
-    "contributors": 16,
-    "topic": "LLM",
-    "event_type": "discussion",
+    "stars_added": 343,
+    "forks_added": 141,
+    "contributors": 21,
+    "topic": "AI Agents",
+    "event_type": "push",
     "company_id": "CMP-001",
     "company": "OpenAI",
     "region": "North America",
-    "issue_count": 6,
-    "watchers_added": 59,
+    "issue_count": 7,
+    "watchers_added": 102,
     "release_flag": false,
-    "trend_score": 57.39,
-    "popularity_growth_pct": 2.15,
-    "volatility_metric": 9.95,
-    "innovation_score": 91.33,
-    "adoption_score": 71.39,
+    "trend_score": 57.87,
+    "popularity_growth_pct": 1.79,
+    "volatility_metric": 7.63,
+    "innovation_score": 89.21,
+    "adoption_score": 71.09,
+    "github_activity_index": 48.34,
+    "package_downloads_weekly": 3549401,
+    "documentation_health_score": 83.59,
+    "community_health_score": 61.69,
     "risk_indicator": "low",
-    "ai_summary": "OpenAI teams are discussing how llm is moving from experimentation into production buying cycles. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption."
+    "ai_summary": "Developers are comparing tooling choices around ai agents as budget owners ask for faster ROI and clearer governance. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption."
   },
   {
     "event_id": "GIT-300001",
-    "event_time": "2025-01-06T00:00:00",
-    "repository": "openai/ai-agents-ops",
+    "event_time": "2025-01-03T00:00:00",
+    "repository": "openai/generative-ai-platform",
     "language": "Python",
-    "stars_added": 271,
-    "forks_added": 139,
-    "contributors": 13,
-    "topic": "AI Agents",
-    "event_type": "release",
+    "stars_added": 228,
+    "forks_added": 133,
+    "contributors": 18,
+    "topic": "Generative AI",
+    "event_type": "pull_request",
     "company_id": "CMP-001",
     "company": "OpenAI",
     "region": "North America",
-    "issue_count": 10,
-    "watchers_added": 61,
-    "release_flag": true,
-    "trend_score": 57.39,
-    "popularity_growth_pct": 2.15,
-    "volatility_metric": 9.95,
-    "innovation_score": 91.33,
-    "adoption_score": 71.39,
+    "issue_count": 12,
+    "watchers_added": 27,
+    "release_flag": false,
+    "trend_score": 56.38,
+    "popularity_growth_pct": 0.57,
+    "volatility_metric": 8.73,
+    "innovation_score": 88.09,
+    "adoption_score": 71.27,
+    "github_activity_index": 47.58,
+    "package_downloads_weekly": 2663788,
+    "documentation_health_score": 75.36,
+    "community_health_score": 59.01,
     "risk_indicator": "low",
-    "ai_summary": "Analysts note that ai agents usage patterns on Jan 06, 2025 reflect both hype and practical deployment pressure. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption."
+    "ai_summary": "OpenAI teams are discussing how generative ai is moving from experimentation into production buying cycles. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption."
   }
 ]
 ```
@@ -270,7 +302,7 @@ Rows: `33002`
 
 ## tech_blogs.csv
 
-Rows: `11468`
+Rows: `36350`
 
 ### Schema
 
@@ -290,54 +322,54 @@ Rows: `11468`
 [
   {
     "article_id": "ART-400000",
-    "published_at": "2025-01-02T00:00:00",
-    "source": "Dev.to",
-    "author": "Maya Garcia",
+    "published_at": "2025-01-05T00:00:00",
+    "source": "Medium",
+    "author": "Noah Wright",
     "topic": "AI Agents",
-    "title": "AI Agents buying signals in 2025: what OpenAI signals imply",
-    "views": 9809,
-    "reading_time_minutes": 6,
-    "summary": "OpenAI teams are discussing how ai agents is moving from experimentation into production buying cycles. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
-    "company_id": "CMP-001",
-    "company": "OpenAI",
-    "country": "Canada",
-    "region": "North America",
-    "trend_score": 45.27,
-    "sentiment_score": 0.21,
-    "funding_estimate_musd": 37.64,
-    "hiring_activity_index": 51.87,
-    "hashtags": "#aiagents|#CA",
-    "popularity_growth_pct": 1.98,
-    "volatility_metric": 7.85,
+    "title": "AI Agents buying signals in 2025: what Replit signals imply",
+    "views": 28863,
+    "reading_time_minutes": 5,
+    "summary": "Developers are comparing tooling choices around ai agents as budget owners ask for faster ROI and clearer governance. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
+    "company_id": "CMP-014",
+    "company": "Replit",
+    "country": "Germany",
+    "region": "Europe",
+    "trend_score": 44.49,
+    "sentiment_score": 0.272,
+    "funding_estimate_musd": 50.42,
+    "hiring_activity_index": 59.7,
+    "hashtags": "#aiagents|#DE",
+    "popularity_growth_pct": -3.76,
+    "volatility_metric": 7.98,
     "risk_indicator": "low",
-    "innovation_score": 90.86,
-    "adoption_score": 69.0,
+    "innovation_score": 90.5,
+    "adoption_score": 65.12,
     "source_reference": "https://blog.example.com/400000"
   },
   {
     "article_id": "ART-400001",
-    "published_at": "2025-01-02T00:00:00",
-    "source": "Hugging Face Blog",
-    "author": "Kenji Dubois",
+    "published_at": "2025-01-05T00:00:00",
+    "source": "Substack",
+    "author": "Ava Patel",
     "topic": "AI Agents",
-    "title": "AI Agents open-source momentum in 2025: what OpenAI signals imply",
-    "views": 15740,
-    "reading_time_minutes": 5,
-    "summary": "Analysts note that ai agents usage patterns on Jan 02, 2025 reflect both hype and practical deployment pressure. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
+    "title": "AI Agents enterprise rollout in 2025: what OpenAI signals imply",
+    "views": 70680,
+    "reading_time_minutes": 10,
+    "summary": "Developers are comparing tooling choices around ai agents as budget owners ask for faster ROI and clearer governance. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
     "company_id": "CMP-001",
     "company": "OpenAI",
-    "country": "Canada",
-    "region": "North America",
-    "trend_score": 45.27,
-    "sentiment_score": 0.21,
-    "funding_estimate_musd": 24.91,
-    "hiring_activity_index": 51.98,
-    "hashtags": "#aiagents|#CA",
-    "popularity_growth_pct": 1.98,
-    "volatility_metric": 7.85,
-    "risk_indicator": "low",
-    "innovation_score": 90.86,
-    "adoption_score": 69.0,
+    "country": "Singapore",
+    "region": "Asia",
+    "trend_score": 48.53,
+    "sentiment_score": 0.169,
+    "funding_estimate_musd": 44.24,
+    "hiring_activity_index": 53.47,
+    "hashtags": "#aiagents|#SG",
+    "popularity_growth_pct": -3.39,
+    "volatility_metric": 9.99,
+    "risk_indicator": "moderate",
+    "innovation_score": 86.86,
+    "adoption_score": 62.21,
     "source_reference": "https://blog.example.com/400001"
   }
 ]
@@ -357,7 +389,7 @@ Rows: `11468`
 
 ## stackoverflow_questions.csv
 
-Rows: `18470`
+Rows: `109885`
 
 ### Schema
 
@@ -376,46 +408,54 @@ Rows: `18470`
 [
   {
     "question_id": "SO-500000",
-    "created_at": "2025-01-01T00:00:00",
+    "created_at": "2025-01-02T00:00:00",
     "tag": "AI Agents",
-    "views": 5870,
-    "answers": 6,
-    "score": 74,
+    "views": 6439,
+    "answers": 10,
+    "score": 56,
     "accepted_answer": true,
-    "title": "Best production pattern for AI Agents with LangChain stack?",
-    "body_preview": "Our team is deploying ai agents workloads and seeing issues around hallucination risk. We use components similar to LangChain and need guidance for production-ready patterns.",
-    "company_id": "CMP-028",
-    "company": "LangChain",
+    "title": "Best production pattern for AI Agents with Anthropic stack?",
+    "body_preview": "Our team is deploying ai agents workloads and seeing issues around hallucination risk. We use components similar to Anthropic and need guidance for production-ready patterns.",
+    "company_id": "CMP-002",
+    "company": "Anthropic",
     "country": "United Arab Emirates",
-    "trend_score": 46.07,
-    "sentiment_score": 0.176,
-    "popularity_growth_pct": 2.51,
-    "volatility_metric": 7.38,
-    "innovation_score": 91.14,
-    "adoption_score": 71.66,
-    "risk_indicator": "low",
+    "trend_score": 48.58,
+    "sentiment_score": 0.053,
+    "popularity_growth_pct": 7.01,
+    "volatility_metric": 12.08,
+    "innovation_score": 95.83,
+    "adoption_score": 65.58,
+    "stackoverflow_question_volume": 42,
+    "documentation_health_score": 78.94,
+    "community_health_score": 54.82,
+    "package_downloads_weekly": 3032290,
+    "risk_indicator": "moderate",
     "source_reference": "https://stackoverflow.example.com/questions/500000"
   },
   {
     "question_id": "SO-500001",
-    "created_at": "2025-01-01T00:00:00",
+    "created_at": "2025-01-02T00:00:00",
     "tag": "AI Agents",
-    "views": 5317,
-    "answers": 8,
-    "score": 57,
+    "views": 6018,
+    "answers": 5,
+    "score": 35,
     "accepted_answer": true,
-    "title": "How to scale AI Agents workloads without runaway cost?",
+    "title": "Why is AI Agents latency spiking after deployment?",
     "body_preview": "Our team is deploying ai agents workloads and seeing issues around schema drift. We use components similar to OpenAI and need guidance for production-ready patterns.",
     "company_id": "CMP-001",
     "company": "OpenAI",
-    "country": "United Arab Emirates",
-    "trend_score": 46.07,
-    "sentiment_score": 0.176,
-    "popularity_growth_pct": 2.51,
-    "volatility_metric": 7.38,
-    "innovation_score": 91.14,
-    "adoption_score": 71.66,
-    "risk_indicator": "low",
+    "country": "Japan",
+    "trend_score": 44.61,
+    "sentiment_score": 0.272,
+    "popularity_growth_pct": -2.47,
+    "volatility_metric": 9.15,
+    "innovation_score": 92.86,
+    "adoption_score": 67.28,
+    "stackoverflow_question_volume": 19,
+    "documentation_health_score": 83.78,
+    "community_health_score": 47.87,
+    "package_downloads_weekly": 3275359,
+    "risk_indicator": "moderate",
     "source_reference": "https://stackoverflow.example.com/questions/500001"
   }
 ]
@@ -435,7 +475,7 @@ Rows: `18470`
 
 ## google_trends.csv
 
-Rows: `97000`
+Rows: `746900`
 
 ### Schema
 
@@ -461,24 +501,40 @@ Rows: `97000`
     "sentiment_score": 0.132,
     "popularity_growth_pct": 0.6,
     "volatility_metric": 6.76,
-    "innovation_score": 89.73,
-    "adoption_score": 63.67,
+    "innovation_score": 88.51,
+    "adoption_score": 67.29,
+    "package_downloads_weekly": 2071173,
+    "github_activity_index": 61.03,
+    "stackoverflow_question_volume": 9,
+    "job_market_demand_index": 86.62,
+    "education_enrollment_index": 82.13,
+    "conference_talks": 15,
+    "documentation_health_score": 87.47,
+    "community_health_score": 59.66,
     "risk_indicator": "low",
     "event_refs": ""
   },
   {
     "date": "2025-01-01",
     "keyword": "AI Agents",
-    "trend_score": 47,
+    "trend_score": 48,
     "region": "IN",
     "country": "India",
     "tech_category": "AI Agents",
-    "sentiment_score": 0.274,
-    "popularity_growth_pct": 1.28,
-    "volatility_metric": 7.07,
-    "innovation_score": 88.51,
-    "adoption_score": 67.29,
-    "risk_indicator": "low",
+    "sentiment_score": 0.21,
+    "popularity_growth_pct": 3.98,
+    "volatility_metric": 9.47,
+    "innovation_score": 94.6,
+    "adoption_score": 67.77,
+    "package_downloads_weekly": 2239482,
+    "github_activity_index": 56.6,
+    "stackoverflow_question_volume": 14,
+    "job_market_demand_index": 83.92,
+    "education_enrollment_index": 80.06,
+    "conference_talks": 14,
+    "documentation_health_score": 85.58,
+    "community_health_score": 49.23,
+    "risk_indicator": "moderate",
     "event_refs": ""
   }
 ]
@@ -498,7 +554,7 @@ Rows: `97000`
 
 ## reddit_discussions.csv
 
-Rows: `25348`
+Rows: `81426`
 
 ### Schema
 
@@ -516,56 +572,56 @@ Rows: `25348`
 [
   {
     "reddit_post_id": "RDT-600000",
-    "created_at": "2025-01-02T18:07:00",
-    "subreddit": "r/devops",
-    "username": "model_60000",
+    "created_at": "2025-01-01T20:29:00",
+    "subreddit": "r/startups",
+    "username": "cloud_89685",
     "topic": "AI Agents",
     "title": "Is AI Agents still underhyped or already overheating?",
-    "body": "Seeing more teams mention Windsurf whenever ai agents comes up. Feels like adoption is real in United Kingdom, but the debate around security keeps resurfacing.",
-    "upvotes": 842,
-    "comments": 191,
-    "sentiment_score": 0.335,
-    "company_id": "CMP-015",
-    "company": "Windsurf",
-    "country": "United Kingdom",
-    "region": "Europe",
-    "trend_score": 50.32,
-    "funding_estimate_musd": 27.05,
-    "hiring_activity_index": 46.38,
-    "hashtags": "#aiagents|#UK",
-    "popularity_growth_pct": -6.34,
-    "volatility_metric": 9.43,
-    "ai_summary": "Developers are comparing tooling choices around ai agents as budget owners ask for faster ROI and clearer governance. The conversation is active, though buyers continue to separate pilot noise from repeatable production value.",
-    "risk_indicator": "moderate",
-    "innovation_score": 92.27,
-    "adoption_score": 64.83,
+    "body": "Seeing more teams mention Replit whenever ai agents comes up. Feels like adoption is real in Canada, but the debate around moats keeps resurfacing.",
+    "upvotes": 923,
+    "comments": 236,
+    "sentiment_score": 0.408,
+    "company_id": "CMP-014",
+    "company": "Replit",
+    "country": "Canada",
+    "region": "North America",
+    "trend_score": 47.5,
+    "funding_estimate_musd": 17.46,
+    "hiring_activity_index": 41.27,
+    "hashtags": "#aiagents|#CA",
+    "popularity_growth_pct": 4.17,
+    "volatility_metric": 8.66,
+    "ai_summary": "Analysts note that ai agents usage patterns on Jan 01, 2025 reflect both hype and practical deployment pressure. The conversation is active, though buyers continue to separate pilot noise from repeatable production value.",
+    "risk_indicator": "low",
+    "innovation_score": 89.37,
+    "adoption_score": 65.75,
     "source_reference": "https://reddit.example.com/600000"
   },
   {
     "reddit_post_id": "RDT-600001",
-    "created_at": "2025-01-02T13:06:00",
-    "subreddit": "r/artificial",
-    "username": "secure_56416",
+    "created_at": "2025-01-01T23:51:00",
+    "subreddit": "r/datascience",
+    "username": "model_37853",
     "topic": "AI Agents",
     "title": "Is AI Agents still underhyped or already overheating?",
-    "body": "Seeing more teams mention Windsurf whenever ai agents comes up. Feels like adoption is real in United Kingdom, but the debate around moats keeps resurfacing.",
-    "upvotes": 851,
-    "comments": 181,
-    "sentiment_score": 0.236,
-    "company_id": "CMP-015",
-    "company": "Windsurf",
-    "country": "United Kingdom",
-    "region": "Europe",
-    "trend_score": 50.32,
-    "funding_estimate_musd": 20.01,
-    "hiring_activity_index": 49.15,
-    "hashtags": "#aiagents|#UK",
-    "popularity_growth_pct": -6.34,
-    "volatility_metric": 9.43,
-    "ai_summary": "Windsurf teams are discussing how ai agents is moving from experimentation into production buying cycles. The conversation is active, though buyers continue to separate pilot noise from repeatable production value.",
-    "risk_indicator": "moderate",
-    "innovation_score": 92.27,
-    "adoption_score": 64.83,
+    "body": "Seeing more teams mention Scale AI whenever ai agents comes up. Feels like adoption is real in United Arab Emirates, but the debate around moats keeps resurfacing.",
+    "upvotes": 749,
+    "comments": 160,
+    "sentiment_score": 0.239,
+    "company_id": "CMP-009",
+    "company": "Scale AI",
+    "country": "United Arab Emirates",
+    "region": "Middle East",
+    "trend_score": 45.4,
+    "funding_estimate_musd": 34.79,
+    "hiring_activity_index": 44.85,
+    "hashtags": "#aiagents|#AE",
+    "popularity_growth_pct": 0.54,
+    "volatility_metric": 8.15,
+    "ai_summary": "Scale AI teams are discussing how ai agents is moving from experimentation into production buying cycles. The conversation is active, though buyers continue to separate pilot noise from repeatable production value.",
+    "risk_indicator": "low",
+    "innovation_score": 92.33,
+    "adoption_score": 68.25,
     "source_reference": "https://reddit.example.com/600001"
   }
 ]
@@ -585,7 +641,7 @@ Rows: `25348`
 
 ## hackernews_posts.csv
 
-Rows: `1538`
+Rows: `9750`
 
 ### Schema
 
@@ -602,44 +658,44 @@ Rows: `1538`
 [
   {
     "hn_post_id": "HN-700000",
-    "created_at": "2025-01-02T12:00:00",
-    "title": "Windsurf and the new economics of ai agents",
-    "domain": "huggingface.co",
+    "created_at": "2025-01-01T07:00:00",
+    "title": "Replit and the new economics of ai agents",
+    "domain": "databricks.com",
     "topic": "AI Agents",
-    "points": 219,
-    "comments": 99,
-    "company_id": "CMP-015",
-    "company": "Windsurf",
+    "points": 189,
+    "comments": 76,
+    "company_id": "CMP-014",
+    "company": "Replit",
     "country": "United States",
-    "trend_score": 48.92,
-    "sentiment_score": 0.284,
-    "popularity_growth_pct": -5.42,
-    "volatility_metric": 11.48,
-    "innovation_score": 89.4,
-    "adoption_score": 61.84,
-    "risk_indicator": "moderate",
+    "trend_score": 51.72,
+    "sentiment_score": 0.349,
+    "popularity_growth_pct": 0.6,
+    "volatility_metric": 6.76,
+    "innovation_score": 88.51,
+    "adoption_score": 67.29,
+    "risk_indicator": "low",
     "ai_summary": "Developers are comparing tooling choices around ai agents as budget owners ask for faster ROI and clearer governance. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
     "source_reference": "https://news.ycombinator.com/item?id=700000"
   },
   {
     "hn_post_id": "HN-700001",
-    "created_at": "2025-01-02T19:00:00",
+    "created_at": "2025-01-04T15:00:00",
     "title": "OpenAI and the new economics of ai agents",
-    "domain": "github.com",
+    "domain": "huggingface.co",
     "topic": "AI Agents",
-    "points": 199,
-    "comments": 68,
+    "points": 249,
+    "comments": 103,
     "company_id": "CMP-001",
     "company": "OpenAI",
     "country": "United States",
-    "trend_score": 48.92,
-    "sentiment_score": -0.102,
-    "popularity_growth_pct": -5.42,
-    "volatility_metric": 11.48,
-    "innovation_score": 89.4,
-    "adoption_score": 61.84,
+    "trend_score": 53.53,
+    "sentiment_score": 0.05,
+    "popularity_growth_pct": 0.68,
+    "volatility_metric": 11.68,
+    "innovation_score": 93.38,
+    "adoption_score": 75.4,
     "risk_indicator": "moderate",
-    "ai_summary": "OpenAI teams are discussing how ai agents is moving from experimentation into production buying cycles. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
+    "ai_summary": "Analysts note that ai agents usage patterns on Jan 04, 2025 reflect both hype and practical deployment pressure. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
     "source_reference": "https://news.ycombinator.com/item?id=700001"
   }
 ]
@@ -657,7 +713,7 @@ Rows: `1538`
 
 ## youtube_ai_content.csv
 
-Rows: `6942`
+Rows: `22992`
 
 ### Schema
 
@@ -674,54 +730,54 @@ Rows: `6942`
 [
   {
     "video_id": "YT-800000",
-    "published_at": "2025-01-03T02:00:00",
-    "channel": "Two Minute Papers",
+    "published_at": "2025-01-01T13:00:00",
+    "channel": "Fireship",
     "topic": "AI Agents",
-    "company_id": "CMP-002",
-    "company": "Anthropic",
-    "title": "AI Agents market update: what Anthropic says about 2026 demand",
-    "views": 44849,
-    "likes": 3036,
-    "comments": 636,
-    "watch_time_minutes": 36058,
-    "country": "United Kingdom",
-    "sentiment_score": 0.051,
-    "trend_score": 53.05,
-    "funding_estimate_musd": 18.63,
-    "hiring_activity_index": 47.14,
-    "hashtags": "#aiagents|#AI|#UK",
-    "popularity_growth_pct": 5.42,
-    "volatility_metric": 11.1,
-    "ai_summary": "Anthropic teams are discussing how ai agents is moving from experimentation into production buying cycles. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
-    "risk_indicator": "moderate",
-    "innovation_score": 88.95,
-    "adoption_score": 71.1,
+    "company_id": "CMP-001",
+    "company": "OpenAI",
+    "title": "AI Agents market update: what OpenAI says about 2026 demand",
+    "views": 33505,
+    "likes": 2215,
+    "comments": 379,
+    "watch_time_minutes": 55546,
+    "country": "Canada",
+    "sentiment_score": 0.299,
+    "trend_score": 47.5,
+    "funding_estimate_musd": 25.13,
+    "hiring_activity_index": 35.62,
+    "hashtags": "#aiagents|#AI|#CA",
+    "popularity_growth_pct": 4.17,
+    "volatility_metric": 8.66,
+    "ai_summary": "Analysts note that ai agents usage patterns on Jan 01, 2025 reflect both hype and practical deployment pressure. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
+    "risk_indicator": "low",
+    "innovation_score": 89.37,
+    "adoption_score": 65.75,
     "source_reference": "https://youtube.example.com/watch?v=800000"
   },
   {
     "video_id": "YT-800001",
-    "published_at": "2025-01-03T07:00:00",
-    "channel": "Machine Learning Street Talk",
+    "published_at": "2025-01-02T23:00:00",
+    "channel": "Two Minute Papers",
     "topic": "AI Agents",
-    "company_id": "CMP-015",
-    "company": "Windsurf",
-    "title": "AI Agents market update: what Windsurf says about 2026 demand",
-    "views": 12777,
-    "likes": 384,
-    "comments": 50,
-    "watch_time_minutes": 24553,
-    "country": "United Kingdom",
-    "sentiment_score": 0.213,
-    "trend_score": 53.05,
-    "funding_estimate_musd": 23.33,
-    "hiring_activity_index": 45.52,
-    "hashtags": "#aiagents|#AI|#UK",
-    "popularity_growth_pct": 5.42,
-    "volatility_metric": 11.1,
-    "ai_summary": "Windsurf teams are discussing how ai agents is moving from experimentation into production buying cycles. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
-    "risk_indicator": "moderate",
-    "innovation_score": 88.95,
-    "adoption_score": 71.1,
+    "company_id": "CMP-009",
+    "company": "Scale AI",
+    "title": "AI Agents market update: what Scale AI says about 2026 demand",
+    "views": 49118,
+    "likes": 3372,
+    "comments": 473,
+    "watch_time_minutes": 112832,
+    "country": "Canada",
+    "sentiment_score": -0.169,
+    "trend_score": 47.04,
+    "funding_estimate_musd": 37.28,
+    "hiring_activity_index": 31.76,
+    "hashtags": "#aiagents|#AI|#CA",
+    "popularity_growth_pct": -0.96,
+    "volatility_metric": 7.98,
+    "ai_summary": "Scale AI teams are discussing how ai agents is moving from experimentation into production buying cycles. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
+    "risk_indicator": "low",
+    "innovation_score": 91.55,
+    "adoption_score": 68.3,
     "source_reference": "https://youtube.example.com/watch?v=800001"
   }
 ]
@@ -741,7 +797,7 @@ Rows: `6942`
 
 ## startup_funding.csv
 
-Rows: `482`
+Rows: `561`
 
 ### Schema
 
@@ -760,42 +816,42 @@ Rows: `482`
 [
   {
     "funding_event_id": "FND-900000",
-    "announced_at": "2025-01-19T00:00:00",
-    "company_id": "CMP-001",
-    "company": "OpenAI",
-    "country": "United States",
-    "region": "North America",
-    "tech_category": "AI Agents",
-    "round_type": "Growth Round",
-    "amount_musd": 136.02,
-    "valuation_musd": 987.81,
-    "lead_investor": "SoftBank",
-    "sentiment_score": 0.264,
-    "trend_score": 55.92,
-    "estimated_hiring_impact_pct": 2.0,
-    "risk_indicator": "low",
-    "innovation_score": 89.78,
-    "adoption_score": 72.37,
-    "source_reference": "https://funding.example.com/900000"
-  },
-  {
-    "funding_event_id": "FND-900001",
-    "announced_at": "2025-01-22T00:00:00",
+    "announced_at": "2025-02-09T00:00:00",
     "company_id": "CMP-001",
     "company": "OpenAI",
     "country": "United States",
     "region": "North America",
     "tech_category": "Generative AI",
     "round_type": "Growth Round",
-    "amount_musd": 150.29,
-    "valuation_musd": 2578.7,
-    "lead_investor": "Lightspeed",
-    "sentiment_score": 0.015,
-    "trend_score": 65.52,
-    "estimated_hiring_impact_pct": 3.07,
+    "amount_musd": 194.0,
+    "valuation_musd": 1717.88,
+    "lead_investor": "SoftBank",
+    "sentiment_score": 0.162,
+    "trend_score": 63.58,
+    "estimated_hiring_impact_pct": 4.02,
     "risk_indicator": "low",
-    "innovation_score": 91.79,
-    "adoption_score": 71.29,
+    "innovation_score": 93.57,
+    "adoption_score": 67.28,
+    "source_reference": "https://funding.example.com/900000"
+  },
+  {
+    "funding_event_id": "FND-900001",
+    "announced_at": "2025-04-01T00:00:00",
+    "company_id": "CMP-001",
+    "company": "OpenAI",
+    "country": "United States",
+    "region": "North America",
+    "tech_category": "AI Agents",
+    "round_type": "Growth Round",
+    "amount_musd": 88.19,
+    "valuation_musd": 2331.8,
+    "lead_investor": "Sequoia",
+    "sentiment_score": 0.38,
+    "trend_score": 56.1,
+    "estimated_hiring_impact_pct": 2.0,
+    "risk_indicator": "low",
+    "innovation_score": 90.01,
+    "adoption_score": 62.91,
     "source_reference": "https://funding.example.com/900001"
   }
 ]
@@ -815,7 +871,7 @@ Rows: `482`
 
 ## producthunt_launches.csv
 
-Rows: `3880`
+Rows: `2400`
 
 ### Schema
 
@@ -833,46 +889,46 @@ Rows: `3880`
 [
   {
     "launch_id": "PH-950000",
-    "launched_at": "2026-02-05T00:00:00",
-    "company_id": "CMP-015",
-    "company": "Windsurf",
-    "product_name": "Windsurf Flow",
-    "category": "Infrastructure",
-    "topic": "Automation",
-    "upvotes": 157,
-    "comments": 27,
-    "country": "United States",
-    "trend_score": 51.59,
-    "sentiment_score": -0.035,
-    "popularity_growth_pct": -5.62,
-    "volatility_metric": 10.6,
-    "funding_estimate_musd": 15.48,
-    "innovation_score": 82.83,
-    "adoption_score": 76.93,
+    "launched_at": "2025-04-04T00:00:00",
+    "company_id": "CMP-097",
+    "company": "XRFoundry",
+    "product_name": "XRFoundry Flow",
+    "category": "Security",
+    "topic": "Blockchain Dev",
+    "upvotes": 61,
+    "comments": 10,
+    "country": "Japan",
+    "trend_score": 22.96,
+    "sentiment_score": 0.063,
+    "popularity_growth_pct": -14.49,
+    "volatility_metric": 20.2,
+    "funding_estimate_musd": 24.94,
+    "innovation_score": 87.17,
+    "adoption_score": 25.0,
     "risk_indicator": "low",
-    "ai_summary": "Developers are comparing tooling choices around automation as budget owners ask for faster ROI and clearer governance. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
+    "ai_summary": "XRFoundry teams are discussing how blockchain dev is moving from experimentation into production buying cycles. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
     "source_reference": "https://producthunt.example.com/posts/950000"
   },
   {
     "launch_id": "PH-950001",
-    "launched_at": "2025-03-19T00:00:00",
-    "company_id": "CMP-028",
-    "company": "LangChain",
-    "product_name": "LangChain Copilot",
-    "category": "Security",
-    "topic": "Developer Tools",
-    "upvotes": 180,
-    "comments": 35,
+    "launched_at": "2025-06-03T00:00:00",
+    "company_id": "CMP-101",
+    "company": "ModelSignal",
+    "product_name": "ModelSignal Flow",
+    "category": "Automation",
+    "topic": "LangChain",
+    "upvotes": 145,
+    "comments": 11,
     "country": "United States",
-    "trend_score": 48.33,
-    "sentiment_score": 0.463,
-    "popularity_growth_pct": 5.38,
-    "volatility_metric": 11.33,
-    "funding_estimate_musd": 26.24,
-    "innovation_score": 88.47,
-    "adoption_score": 71.15,
+    "trend_score": 41.62,
+    "sentiment_score": 0.293,
+    "popularity_growth_pct": 3.12,
+    "volatility_metric": 11.23,
+    "funding_estimate_musd": 20.27,
+    "innovation_score": 77.36,
+    "adoption_score": 38.41,
     "risk_indicator": "low",
-    "ai_summary": "Developers are comparing tooling choices around developer tools as budget owners ask for faster ROI and clearer governance. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
+    "ai_summary": "Analysts note that langchain usage patterns on Jun 03, 2025 reflect both hype and practical deployment pressure. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
     "source_reference": "https://producthunt.example.com/posts/950001"
   }
 ]
@@ -891,7 +947,7 @@ Rows: `3880`
 
 ## news_media_mentions.csv
 
-Rows: `9514`
+Rows: `30303`
 
 ### Schema
 
@@ -908,50 +964,50 @@ Rows: `9514`
 [
   {
     "mention_id": "NEWS-980000",
-    "published_at": "2025-01-01T21:00:00",
-    "source": "The Information",
+    "published_at": "2025-01-05T07:00:00",
+    "source": "VentureBeat",
     "topic": "AI Agents",
-    "company_id": "CMP-015",
-    "company": "Windsurf",
-    "headline": "Windsurf sees stronger enterprise pull for ai agents",
-    "country": "United Kingdom",
-    "region": "Europe",
-    "mention_count": 37,
-    "trend_score": 53.73,
-    "sentiment_score": -0.192,
-    "funding_estimate_musd": 26.99,
-    "hiring_activity_index": 51.61,
-    "hashtags": "#aiagents|#UK",
-    "popularity_growth_pct": 3.54,
-    "volatility_metric": 9.37,
-    "ai_summary": "Analysts note that ai agents usage patterns on Jan 01, 2025 reflect both hype and practical deployment pressure. The conversation is active, though buyers continue to separate pilot noise from repeatable production value.",
+    "company_id": "CMP-001",
+    "company": "OpenAI",
+    "headline": "OpenAI sees stronger enterprise pull for ai agents",
+    "country": "United Arab Emirates",
+    "region": "Middle East",
+    "mention_count": 28,
+    "trend_score": 43.73,
+    "sentiment_score": 0.556,
+    "funding_estimate_musd": 22.55,
+    "hiring_activity_index": 38.47,
+    "hashtags": "#aiagents|#AE",
+    "popularity_growth_pct": 3.4,
+    "volatility_metric": 9.26,
+    "ai_summary": "OpenAI teams are discussing how ai agents is moving from experimentation into production buying cycles. The conversation is active, though buyers continue to separate pilot noise from repeatable production value.",
     "risk_indicator": "moderate",
-    "innovation_score": 88.9,
-    "adoption_score": 65.28,
+    "innovation_score": 92.31,
+    "adoption_score": 67.98,
     "source_reference": "https://news.example.com/980000"
   },
   {
     "mention_id": "NEWS-980001",
-    "published_at": "2025-01-01T05:00:00",
-    "source": "TechCrunch",
+    "published_at": "2025-01-06T00:00:00",
+    "source": "VentureBeat",
     "topic": "AI Agents",
-    "company_id": "CMP-002",
-    "company": "Anthropic",
-    "headline": "Anthropic sees stronger enterprise pull for ai agents",
-    "country": "United Kingdom",
-    "region": "Europe",
-    "mention_count": 43,
-    "trend_score": 53.73,
-    "sentiment_score": 0.02,
-    "funding_estimate_musd": 19.44,
-    "hiring_activity_index": 60.82,
-    "hashtags": "#aiagents|#UK",
-    "popularity_growth_pct": 3.54,
-    "volatility_metric": 9.37,
+    "company_id": "CMP-028",
+    "company": "LangChain",
+    "headline": "LangChain sees stronger enterprise pull for ai agents",
+    "country": "Canada",
+    "region": "North America",
+    "mention_count": 33,
+    "trend_score": 45.21,
+    "sentiment_score": -0.051,
+    "funding_estimate_musd": 21.39,
+    "hiring_activity_index": 50.1,
+    "hashtags": "#aiagents|#CA",
+    "popularity_growth_pct": -2.32,
+    "volatility_metric": 8.37,
     "ai_summary": "Developers are comparing tooling choices around ai agents as budget owners ask for faster ROI and clearer governance. The conversation is active, though buyers continue to separate pilot noise from repeatable production value.",
-    "risk_indicator": "moderate",
-    "innovation_score": 88.9,
-    "adoption_score": 65.28,
+    "risk_indicator": "low",
+    "innovation_score": 94.11,
+    "adoption_score": 69.64,
     "source_reference": "https://news.example.com/980001"
   }
 ]
@@ -971,7 +1027,7 @@ Rows: `9514`
 
 ## kaggle_ml_activity.csv
 
-Rows: `6400`
+Rows: `3200`
 
 ### Schema
 
@@ -989,46 +1045,46 @@ Rows: `6400`
 [
   {
     "kaggle_activity_id": "KGL-990000",
-    "activity_date": "2025-04-25T00:00:00",
-    "competition_name": "Cyber Incident Detection",
-    "topic": "LLM",
-    "company_id": "CMP-001",
-    "company": "OpenAI",
-    "country": "Japan",
-    "kernels_created": 48,
-    "notebook_votes": 716,
-    "dataset_downloads": 1887,
-    "medal_rate": 0.223,
-    "trend_score": 56.88,
-    "sentiment_score": 0.16,
-    "popularity_growth_pct": 0.78,
-    "volatility_metric": 5.86,
-    "innovation_score": 89.86,
-    "adoption_score": 78.67,
+    "activity_date": "2025-06-06T00:00:00",
+    "competition_name": "Agent Reasoning Benchmark",
+    "topic": "TypeScript",
+    "company_id": "CMP-043",
+    "company": "Meta",
+    "country": "United Kingdom",
+    "kernels_created": 60,
+    "notebook_votes": 841,
+    "dataset_downloads": 2224,
+    "medal_rate": 0.211,
+    "trend_score": 68.58,
+    "sentiment_score": -0.012,
+    "popularity_growth_pct": 1.9,
+    "volatility_metric": 6.32,
+    "innovation_score": 68.54,
+    "adoption_score": 66.11,
     "risk_indicator": "low",
-    "ai_summary": "Analysts note that llm usage patterns on Apr 25, 2025 reflect both hype and practical deployment pressure. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
+    "ai_summary": "Meta teams are discussing how typescript is moving from experimentation into production buying cycles. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
     "source_reference": "https://kaggle.example.com/activity/990000"
   },
   {
     "kaggle_activity_id": "KGL-990001",
-    "activity_date": "2025-03-05T00:00:00",
-    "competition_name": "Cyber Incident Detection",
-    "topic": "Inference Optimization",
-    "company_id": "CMP-018",
-    "company": "Mistral AI",
-    "country": "Japan",
-    "kernels_created": 8,
-    "notebook_votes": 117,
-    "dataset_downloads": 443,
-    "medal_rate": 0.208,
-    "trend_score": 22.92,
-    "sentiment_score": 0.275,
-    "popularity_growth_pct": -1.7,
-    "volatility_metric": 8.97,
-    "innovation_score": 84.5,
-    "adoption_score": 60.62,
+    "activity_date": "2025-12-10T00:00:00",
+    "competition_name": "Agent Reasoning Benchmark",
+    "topic": "Swift",
+    "company_id": "CMP-002",
+    "company": "Anthropic",
+    "country": "United Kingdom",
+    "kernels_created": 39,
+    "notebook_votes": 512,
+    "dataset_downloads": 1504,
+    "medal_rate": 0.182,
+    "trend_score": 35.88,
+    "sentiment_score": 0.153,
+    "popularity_growth_pct": 3.84,
+    "volatility_metric": 7.76,
+    "innovation_score": 71.23,
+    "adoption_score": 35.07,
     "risk_indicator": "low",
-    "ai_summary": "Mistral AI teams are discussing how inference optimization is moving from experimentation into production buying cycles. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
+    "ai_summary": "Analysts note that swift usage patterns on Dec 10, 2025 reflect both hype and practical deployment pressure. Demand remains healthy, but platform differentiation now depends on reliability, cost control, and measurable adoption.",
     "source_reference": "https://kaggle.example.com/activity/990001"
   }
 ]
@@ -1046,7 +1102,7 @@ Rows: `6400`
 
 ## companies.csv
 
-Rows: `39`
+Rows: `110`
 
 ### Schema
 
@@ -1071,7 +1127,7 @@ Rows: `39`
     "sector": "AI Platform",
     "stage": "private",
     "reference_type": "real_reference",
-    "dominant_topics": "AI Agents, LLM, Generative AI, Enterprise AI"
+    "dominant_topics": "AI Agents, Enterprise AI, Generative AI, LLM"
   },
   {
     "company_id": "CMP-002",
@@ -1082,7 +1138,7 @@ Rows: `39`
     "sector": "AI Platform",
     "stage": "private",
     "reference_type": "real_reference",
-    "dominant_topics": "AI Agents, LLM, Enterprise AI"
+    "dominant_topics": "AI Agents, Enterprise AI, LLM"
   }
 ]
 ```
@@ -1100,7 +1156,7 @@ Rows: `39`
 
 ## market_events.csv
 
-Rows: `13`
+Rows: `33`
 
 ### Schema
 

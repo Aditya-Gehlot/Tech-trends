@@ -74,7 +74,7 @@ class PredictionService:
         model_id: str | None = None,
     ) -> PredictionGenerationResult:
         feature_path = self.feature_store_dir / "features_all.parquet"
-        model_files = sorted(self.model_dir.glob("*.joblib"), key=lambda p: p.stat().st_mtime, reverse=True)
+        model_files = sorted(self.model_dir.glob("model_*.joblib"), key=lambda p: p.stat().st_mtime, reverse=True)
         if not feature_path.exists() or not model_files:
             return PredictionGenerationResult(
                 prediction_count=0,

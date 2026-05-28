@@ -1,44 +1,44 @@
 {
   "top": [
     {
+      "tech": "Python",
+      "score": 77.98
+    },
+    {
+      "tech": "JavaScript",
+      "score": 75.99
+    },
+    {
+      "tech": "TypeScript",
+      "score": 68.12
+    },
+    {
       "tech": "LLM",
       "score": 64.72
     },
     {
+      "tech": "React",
+      "score": 63.93
+    },
+    {
       "tech": "Generative AI",
-      "score": 63.51
+      "score": 63.53
+    },
+    {
+      "tech": "Java",
+      "score": 62.76
     },
     {
       "tech": "AI Agents",
-      "score": 61.3
+      "score": 61.31
     },
     {
       "tech": "Enterprise AI",
-      "score": 60.04
+      "score": 60.07
     },
     {
       "tech": "Cybersecurity",
-      "score": 57.49
-    },
-    {
-      "tech": "Semiconductors",
-      "score": 47.61
-    },
-    {
-      "tech": "Cloud Computing",
-      "score": 47.17
-    },
-    {
-      "tech": "Developer Tools",
-      "score": 44.91
-    },
-    {
-      "tech": "Open Source AI",
-      "score": 44.41
-    },
-    {
-      "tech": "Data Engineering",
-      "score": 43.97
+      "score": 59.71
     }
   ]
 }

@@ -8,7 +8,7 @@
     "sector": "AI Platform",
     "stage": "private",
     "reference_type": "real_reference",
-    "dominant_topics": "AI Agents, LLM, Generative AI, Enterprise AI"
+    "dominant_topics": "AI Agents, Enterprise AI, Generative AI, LLM"
   },
   {
     "company_id": "CMP-002",
@@ -19,7 +19,7 @@
     "sector": "AI Platform",
     "stage": "private",
     "reference_type": "real_reference",
-    "dominant_topics": "AI Agents, LLM, Enterprise AI"
+    "dominant_topics": "AI Agents, Enterprise AI, LLM"
   },
   {
     "company_id": "CMP-003",
@@ -30,7 +30,7 @@
     "sector": "Research Lab",
     "stage": "subsidiary",
     "reference_type": "real_reference",
-    "dominant_topics": "LLM, Robotics, Edge AI, Enterprise AI"
+    "dominant_topics": "Edge AI, Enterprise AI, LLM, Robotics"
   },
   {
     "company_id": "CMP-004",
@@ -41,7 +41,7 @@
     "sector": "Semiconductors",
     "stage": "public",
     "reference_type": "real_reference",
-    "dominant_topics": "Semiconductors, GPU Infrastructure, Inference Optimization"
+    "dominant_topics": "GPU Infrastructure, Inference Optimization, Semiconductors"
   },
   {
     "company_id": "CMP-005",
@@ -52,6 +52,6 @@
     "sector": "AI Research",
     "stage": "subsidiary",
     "reference_type": "real_reference",
-    "dominant_topics": "Generative AI, Open Source AI, AI Agents"
+    "dominant_topics": "AI Agents, Generative AI, Open Source AI"
   }
 ]

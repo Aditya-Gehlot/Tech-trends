@@ -12,3 +12,23 @@ EVT-010,2026-01-15,16,Inference cost pressure increases optimization focus,"{""I
 EVT-011,2026-02-23,10,AI-enabled attack campaigns increase board-level cyber spending,"{""Cybersecurity"": 18, ""Enterprise AI"": 4, ""Edge AI"": 2}",-0.09
 EVT-012,2026-03-21,14,Web3 trading and token activity rebound before another correction,"{""Web3"": 14}",0.04
 EVT-013,2026-04-16,16,Enterprise agent platforms mature with audit and governance features,"{""AI Agents"": 16, ""Enterprise AI"": 9, ""Automation"": 6, ""Cybersecurity"": 4}",0.06
+EVT-014,2025-02-05,12,Python 3.12 adoption accelerates data and AI platform modernization,"{""Python"": 10, ""FastAPI"": 6, ""Pytest"": 4}",0.05
+EVT-015,2025-02-18,12,Java 21 long-term support upgrades drive enterprise JVM refresh cycles,"{""Java"": 5, ""Spring Boot"": 5, ""Kotlin"": 2}",0.03
+EVT-016,2025-03-04,14,Next.js app-router and React server component adoption moves into mainstream teams,"{""Next.js"": 12, ""React"": 7}",0.06
+EVT-017,2025-03-26,10,Vite and Vitest migration wave pressures legacy Webpack-era stacks,"{""Vitest"": 10, ""React"": 4, ""Vue.js"": 4, ""Angular"": -3}",0.04
+EVT-018,2025-04-15,16,Flash and jQuery remediation programs continue after browser and security policy changes,"{""Flash"": -12, ""jQuery"": -8, ""HTML5"": 5, ""Accessibility"": 4}",-0.08
+EVT-019,2025-05-09,12,Go runtime and Kubernetes ecosystem improvements lift cloud-native backend demand,"{""Go"": 9, ""Kubernetes"": 7, ""Docker"": 3, ""gRPC"": 4}",0.05
+EVT-020,2025-05-22,14,Rust production safety wins boost adoption in infrastructure and AI serving,"{""Rust"": 12, ""WebAssembly"": 7, ""Inference Optimization"": 5}",0.06
+EVT-021,2025-06-17,12,Major package vulnerability increases demand for dependency scanning and OWASP practices,"{""OWASP Security"": 10, ""Zero-Trust Security"": 5, ""GitHub Actions"": 3, ""Cybersecurity"": 8}",-0.05
+EVT-022,2025-07-02,12,Flutter adoption expands across Asia-Pacific fintech and commerce apps,"{""Flutter"": 10, ""Dart"": 6, ""Kotlin Android"": 3, ""React Native"": 2}",0.05
+EVT-023,2025-07-25,10,Enterprise PHP and Ruby workloads shift toward modernization and migration budgets,"{""PHP"": -6, ""Ruby"": -5, ""Laravel"": -3, ""RubyOnRails"": -4, ""FastAPI"": 3, ""Spring Boot"": 3}",-0.04
+EVT-024,2025-08-20,14,DuckDB and Polars gain momentum in local analytics and notebook workflows,"{""DuckDB"": 12, ""Polars"": 10, ""Pandas"": 4}",0.06
+EVT-025,2025-09-03,12,OpenAPI and API-first governance become standard in platform engineering programs,"{""OpenAPI/Swagger"": 8, ""API-First Development"": 9, ""REST APIs"": 2, ""GraphQL"": 4}",0.04
+EVT-026,2025-09-27,14,Zero-trust identity rollout wave follows new supply-chain security guidance,"{""Zero-Trust Security"": 12, ""OAuth 2.0 / OpenID Connect"": 5, ""SAML"": 2, ""Vault"": 5}",0.03
+EVT-027,2025-10-14,12,Kafka alternatives and edge messaging renew interest in NATS and Pulsar,"{""NATS"": 9, ""Apache Pulsar"": 7, ""Apache Kafka"": 4, ""RabbitMQ"": 1}",0.04
+EVT-028,2025-11-06,16,Figma and design-system automation increase frontend platform investment,"{""Figma"": 11, ""Storybook"": 6, ""Tailwind CSS"": 5, ""Chakra UI"": 3}",0.07
+EVT-029,2025-12-02,16,Mainframe modernization budgets rise but COBOL hiring remains replacement-driven,"{""COBOL"": -4, ""Mainframe COBOL"": -2, ""Java"": 2, ""C# / .NET"": 2}",-0.02
+EVT-030,2026-01-08,16,Serverless and edge platforms converge around lower-latency application delivery,"{""Serverless Architecture"": 8, ""Edge Computing"": 10, ""Cloud Computing"": 4}",0.05
+EVT-031,2026-02-05,14,"WebAssembly component tooling matures for browser, server, and plugin runtimes","{""WebAssembly"": 14, ""Rust"": 5, ""Blazor"": 3}",0.06
+EVT-032,2026-03-10,18,Low-code automation platforms see enterprise governance adoption,"{""Low-Code/No-Code"": 11, ""Automation"": 6, ""API-First Development"": 4}",0.05
+EVT-033,2026-04-02,16,Quantum developer conferences lift experimental searches without broad hiring conversion,"{""Quantum Computing"": 12, ""Python"": 2, ""Julia"": 3}",0.04

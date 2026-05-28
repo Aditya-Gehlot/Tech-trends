@@ -30,6 +30,11 @@ from db.session import persistence_enabled, session_scope
 
 logger = logging.getLogger(__name__)
 
+_RUN_PK_CACHE: dict[str, Optional[uuid.UUID]] = {}
+_NORMALIZED_RECORD_INSERTS_DISABLED = False
+_NORMALIZED_RECORDS_INSERTED_THIS_PROCESS = 0
+_VALID_TREND_CLASSES = {"booming", "stable", "declining"}
+
 
 def enabled() -> bool:
     return persistence_enabled()
@@ -78,6 +83,13 @@ def _dt(value: Any) -> Optional[datetime]:
 def _date(value: Any) -> Optional[date]:
     if not value:
         return None
+
+
+def _trend_class(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    normalized = str(value).strip().lower()
+    return normalized if normalized in _VALID_TREND_CLASSES else None
     if isinstance(value, date) and not isinstance(value, datetime):
         return value
     try:
@@ -134,7 +146,11 @@ def _chunked(rows: list[dict[str, Any]], size: Optional[int] = None) -> Iterable
 def _run_pk(session, external_run_id: Optional[str]) -> Optional[uuid.UUID]:
     if not external_run_id:
         return None
-    return session.scalar(select(PipelineRun.id).where(PipelineRun.run_id == external_run_id))
+    if external_run_id in _RUN_PK_CACHE:
+        return _RUN_PK_CACHE[external_run_id]
+    pk = session.scalar(select(PipelineRun.id).where(PipelineRun.run_id == external_run_id))
+    _RUN_PK_CACHE[external_run_id] = pk
+    return pk
 
 
 def create_pipeline_run(run: dict[str, Any]) -> Optional[str]:
@@ -290,8 +306,20 @@ def insert_normalized_records_batch(
     external_run_id: Optional[str] = None,
     processed_file_path: Optional[str] = None,
 ) -> int:
-    if not enabled() or not getattr(settings, "STORE_NORMALIZED_RECORDS", False) or not records:
+    global _NORMALIZED_RECORD_INSERTS_DISABLED, _NORMALIZED_RECORDS_INSERTED_THIS_PROCESS
+    if (
+        not enabled()
+        or not getattr(settings, "STORE_NORMALIZED_RECORDS", False)
+        or _NORMALIZED_RECORD_INSERTS_DISABLED
+        or not records
+    ):
         return 0
+    max_rows = int(getattr(settings, "STORE_NORMALIZED_RECORDS_MAX_ROWS", 0) or 0)
+    if max_rows > 0:
+        remaining = max_rows - _NORMALIZED_RECORDS_INSERTED_THIS_PROCESS
+        if remaining <= 0:
+            return 0
+        records = records[:remaining]
     inserted = 0
     try:
         with session_scope() as session:
@@ -325,9 +353,15 @@ def insert_normalized_records_batch(
                 )
                 result = session.execute(stmt)
                 inserted += int(result.rowcount or 0)
+                _NORMALIZED_RECORDS_INSERTED_THIS_PROCESS += int(result.rowcount or 0)
         return inserted
     except SQLAlchemyError:
         logger.exception("Could not insert normalized records in database")
+        _NORMALIZED_RECORD_INSERTS_DISABLED = True
+        logger.warning(
+            "Disabled normalized_records persistence for this process after a database failure; "
+            "the pipeline will continue with parquet, features, model metadata, and predictions."
+        )
         return inserted
 
 
@@ -545,7 +579,7 @@ def insert_predictions_batch(
                         "run_id": pk,
                         "tech": str(tech),
                         "prediction_date": prediction_day,
-                        "trend_class": record.get("trend") or record.get("trend_class"),
+                        "trend_class": _trend_class(record.get("trend_class")) or _trend_class(record.get("trend")),
                         "confidence": _num(record.get("confidence")),
                         "predicted_growth": _num(record.get("predicted_growth")),
                         "input_feature_date": _date(record.get("date") or record.get("input_feature_date")),

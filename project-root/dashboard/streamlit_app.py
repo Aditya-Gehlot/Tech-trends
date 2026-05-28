@@ -8,6 +8,7 @@ from urllib.parse import quote
 
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import requests
 import streamlit as st
 
@@ -256,6 +257,47 @@ def latest_run_or_status():
         return None, "Unavailable"
 
 
+def api_v1_get(path: str, timeout: int = 30) -> Dict[str, Any]:
+    return api_get(f"/api/v1{path}", timeout=timeout)
+
+
+def api_v1_post(path: str, payload: Dict[str, Any], timeout: int = 30) -> Dict[str, Any]:
+    return api_post(f"/api/v1{path}", payload=payload, timeout=timeout)
+
+
+def show_unavailable(payload: Dict[str, Any]) -> bool:
+    if payload and payload.get("data_available") is False:
+        st.info(f"{payload.get('reason') or 'Analytics data is not available yet.'} Run the pipeline with DB persistence enabled to populate this view.")
+        return True
+    return False
+
+
+def records_df(payload: Dict[str, Any], key: str) -> pd.DataFrame:
+    rows = payload.get(key) if payload else []
+    if isinstance(rows, dict):
+        rows = list(rows.values())
+    return pd.DataFrame(rows or [])
+
+
+def render_analytics_error(exc: Exception) -> None:
+    st.error(f"Analytics API is unavailable: {exc}")
+
+
+def render_overview_card(title: str, item: Dict[str, Any], value_key: str = "name", detail_keys: list[str] | None = None) -> None:
+    detail_keys = detail_keys or []
+    st.metric(title, value(item.get(value_key)))
+    details = {key: item.get(key) for key in detail_keys if item.get(key) is not None}
+    if details:
+        st.caption(" | ".join(f"{key}: {value(val)}" for key, val in details.items()))
+
+
+def plotly_empty_notice(df: pd.DataFrame, message: str) -> bool:
+    if df.empty:
+        st.info(message)
+        return True
+    return False
+
+
 if "api_url" not in st.session_state:
     st.session_state.api_url = DEFAULT_API_URL
 
@@ -289,6 +331,18 @@ tabs = st.tabs([
     "ML & Predictions",
     "Run History",
     "Market Trends",
+    "Executive Dashboard",
+    "Growth & Momentum",
+    "Business Impact",
+    "Ecosystem",
+    "Lifecycle",
+    "Risk & Opportunity",
+    "Geographic Insights",
+    "Benchmarking",
+    "Talent & Skills",
+    "Forecasts",
+    "Events",
+    "Tech Deep Dive",
 ])
 
 with tabs[0]:
@@ -551,6 +605,335 @@ with tabs[5]:
                 st.plotly_chart(px.line(hist_df, x="date", y=["technology_popularity_score", "ecosystem_momentum_score"], title=f"{tech} history"), use_container_width=True)
         except Exception as exc:
             st.error(f"Could not load forecast for {tech}: {exc}")
+
+with tabs[6]:
+    st.subheader("Executive Dashboard")
+    try:
+        overview = api_v1_get("/market/overview")
+        if not show_unavailable(overview):
+            card_cols = st.columns(6)
+            cards = [
+                ("Hottest Technology", overview.get("hottest_tech", {}), ["growth_7d", "trend_class", "confidence"]),
+                ("Market Opportunity", overview.get("highest_market_opportunity", {}), ["opportunity_score", "market_cap_proxy", "company_count"]),
+                ("Highest Paying", overview.get("highest_paying", {}), ["avg_salary", "growth_mom", "experience_premium"]),
+                ("Most In-Demand", overview.get("most_in_demand", {}), ["job_postings_7d", "hiring_velocity", "unique_company_count"]),
+                ("Critical Dependency", overview.get("critical_dependency", {}), ["ecosystem_dependency_score", "maturity_badge"]),
+                ("Biggest Decline", overview.get("biggest_declining", {}), ["decline_rate", "legacy_adoption_remaining"]),
+            ]
+            for col, (title, payload, details) in zip(card_cols, cards):
+                with col:
+                    render_overview_card(title, payload, detail_keys=details)
+
+        growth_payload = api_v1_get("/analytics/growth-matrix?limit=60")
+        growth_df = records_df(growth_payload, "technologies")
+        if not plotly_empty_notice(growth_df, "No growth matrix rows are available from the database."):
+            st.plotly_chart(
+                px.scatter(
+                    growth_df,
+                    x="popularity_score",
+                    y="growth_rate",
+                    size="hiring_demand",
+                    color="trend_class",
+                    hover_name="name",
+                    title="Technology Growth Matrix",
+                ),
+                use_container_width=True,
+            )
+            st.dataframe(growth_df, use_container_width=True, hide_index=True)
+    except Exception as exc:
+        render_analytics_error(exc)
+
+with tabs[7]:
+    st.subheader("Growth & Momentum")
+    try:
+        limit = st.slider("Growth matrix technologies", 10, 120, 50, key="growth_limit")
+        growth_payload = api_v1_get(f"/analytics/growth-matrix?limit={limit}")
+        growth_df = records_df(growth_payload, "technologies")
+        if not plotly_empty_notice(growth_df, "No growth data is available from PostgreSQL."):
+            st.plotly_chart(
+                px.scatter(
+                    growth_df,
+                    x="popularity_score",
+                    y="growth_rate",
+                    size="hiring_demand",
+                    color="trend_class",
+                    hover_name="name",
+                    title="Popularity vs Growth",
+                ),
+                use_container_width=True,
+            )
+
+        leaders = api_v1_get("/analytics/leaderboards?metric=growth&period=qoq&limit=20")
+        leader_df = records_df(leaders, "rankings")
+        if not leader_df.empty:
+            st.plotly_chart(
+                px.bar(
+                    leader_df.sort_values("growth_pct"),
+                    x="growth_pct",
+                    y="name",
+                    orientation="h",
+                    color="growth_pct",
+                    title="Quarter-over-quarter growth leaders",
+                ),
+                use_container_width=True,
+            )
+            st.dataframe(leader_df, use_container_width=True, hide_index=True)
+    except Exception as exc:
+        render_analytics_error(exc)
+
+with tabs[8]:
+    st.subheader("Business Impact")
+    try:
+        salary_payload = api_v1_get("/analytics/salary?limit=25&sort_by=avg_salary")
+        salary_df = records_df(salary_payload, "technologies")
+        if not plotly_empty_notice(salary_df, "No salary analytics are available from PostgreSQL."):
+            salary_cols = [col for col in ["salary_entry", "salary_mid", "salary_senior"] if col in salary_df.columns]
+            if salary_cols:
+                salary_melt = salary_df.melt(id_vars=["name"], value_vars=salary_cols, var_name="experience_level", value_name="salary")
+                st.plotly_chart(
+                    px.bar(salary_melt, x="name", y="salary", color="experience_level", barmode="group", title="Salary tiers by technology"),
+                    use_container_width=True,
+                )
+            st.dataframe(salary_df, use_container_width=True, hide_index=True)
+
+        velocity_payload = api_v1_get("/analytics/hiring-velocity?limit=8&days=60")
+        velocity_df = records_df(velocity_payload, "technologies")
+        if not velocity_df.empty:
+            velocity_df["date"] = pd.to_datetime(velocity_df["date"], errors="coerce")
+            st.plotly_chart(
+                px.line(velocity_df, x="date", y="job_postings", color="name", title="Hiring velocity over time"),
+                use_container_width=True,
+            )
+    except Exception as exc:
+        render_analytics_error(exc)
+
+with tabs[9]:
+    st.subheader("Ecosystem")
+    try:
+        eco_payload = api_v1_get("/analytics/ecosystem-dependencies?depth=2")
+        if not show_unavailable(eco_payload):
+            nodes_df = records_df(eco_payload, "nodes")
+            edges_df = records_df(eco_payload, "edges")
+            if not nodes_df.empty:
+                st.plotly_chart(
+                    px.bar(
+                        nodes_df.sort_values("criticality_score", ascending=False).head(25),
+                        x="label",
+                        y="criticality_score",
+                        color="trend_class",
+                        title="Critical ecosystem components",
+                    ),
+                    use_container_width=True,
+                )
+            if not edges_df.empty:
+                st.markdown("**Dependency edges from co-occurrence**")
+                st.dataframe(edges_df.sort_values("strength", ascending=False), use_container_width=True, hide_index=True)
+
+        co_payload = api_v1_get("/analytics/tech-cooccurrence?limit=50")
+        co_df = records_df(co_payload, "matrix")
+        if not co_df.empty:
+            pivot = co_df.pivot_table(index="tech1", columns="tech2", values="cooccurrence_score", fill_value=0)
+            st.plotly_chart(px.imshow(pivot, title="Technology co-occurrence heatmap"), use_container_width=True)
+    except Exception as exc:
+        render_analytics_error(exc)
+
+with tabs[10]:
+    st.subheader("Lifecycle")
+    try:
+        lifecycle_payload = api_v1_get("/analytics/lifecycle?limit=80")
+        lifecycle_df = records_df(lifecycle_payload, "technologies")
+        if not plotly_empty_notice(lifecycle_df, "No lifecycle analytics are available from PostgreSQL."):
+            st.plotly_chart(
+                px.scatter(
+                    lifecycle_df,
+                    x="years_in_market",
+                    y="hype_score",
+                    size="adoption",
+                    color="adoption_stage",
+                    hover_name="name",
+                    title="Technology lifecycle positioning",
+                ),
+                use_container_width=True,
+            )
+            st.dataframe(lifecycle_df, use_container_width=True, hide_index=True)
+    except Exception as exc:
+        render_analytics_error(exc)
+
+with tabs[11]:
+    st.subheader("Risk & Opportunity")
+    try:
+        risk_payload = api_v1_get("/analytics/risk-opportunity?limit=80")
+        risk_df = records_df(risk_payload, "technologies")
+        if not plotly_empty_notice(risk_df, "No risk/opportunity analytics are available from PostgreSQL."):
+            st.plotly_chart(
+                px.scatter(
+                    risk_df,
+                    x="risk_score",
+                    y="opportunity_score",
+                    size="market_size",
+                    color="quadrant",
+                    hover_name="name",
+                    title="Risk vs Opportunity Matrix",
+                ),
+                use_container_width=True,
+            )
+
+        stability_payload = api_v1_get("/analytics/stability?limit=25")
+        stability_df = records_df(stability_payload, "technologies")
+        if not stability_df.empty:
+            st.plotly_chart(
+                px.bar(stability_df.sort_values("stability_score"), x="stability_score", y="name", orientation="h", title="Volatility & stability index"),
+                use_container_width=True,
+            )
+    except Exception as exc:
+        render_analytics_error(exc)
+
+with tabs[12]:
+    st.subheader("Geographic Insights")
+    try:
+        country = st.text_input("Country filter", value="", key="country_filter").strip()
+        country_query = f"&country={quote(country, safe='')}" if country else ""
+        regional_payload = api_v1_get(f"/analytics/regional?limit=30{country_query}")
+        regional_df = records_df(regional_payload, "hiring_demand_by_tech")
+        if not plotly_empty_notice(regional_df, "No regional hiring analytics are available from PostgreSQL."):
+            st.plotly_chart(
+                px.bar(regional_df, x="name", y="job_postings", color="avg_salary", title="Hiring demand by technology and region"),
+                use_container_width=True,
+            )
+            st.dataframe(regional_df, use_container_width=True, hide_index=True)
+    except Exception as exc:
+        render_analytics_error(exc)
+
+with tabs[13]:
+    st.subheader("Benchmarking")
+    try:
+        growth_payload = api_v1_get("/analytics/growth-matrix?limit=80")
+        tech_options = records_df(growth_payload, "technologies")
+        options = tech_options["name"].dropna().tolist() if not tech_options.empty and "name" in tech_options.columns else []
+        selected_techs = st.multiselect("Compare technologies", options=options, default=options[:3], key="benchmark_techs")
+        metrics_choice = st.multiselect(
+            "Metrics",
+            ["salary", "growth", "hiring", "github", "sentiment", "stability", "adoption", "maturity"],
+            default=["salary", "growth", "hiring", "stability", "adoption"],
+            key="benchmark_metrics",
+        )
+        if selected_techs:
+            compare_payload = api_v1_post("/analytics/compare", {"techs": selected_techs, "metrics": metrics_choice})
+            if not show_unavailable(compare_payload):
+                comparison = compare_payload.get("comparison", {})
+                comp_df = pd.DataFrame(comparison).T
+                st.dataframe(comp_df, use_container_width=True)
+                if not comp_df.empty:
+                    fig = go.Figure()
+                    categories = comp_df.index.tolist()
+                    for tech in comp_df.columns:
+                        fig.add_trace(go.Scatterpolar(r=comp_df[tech].fillna(0).tolist(), theta=categories, fill="toself", name=tech))
+                    fig.update_layout(title="Technology benchmark radar", polar=dict(radialaxis=dict(visible=True)))
+                    st.plotly_chart(fig, use_container_width=True)
+    except Exception as exc:
+        render_analytics_error(exc)
+
+with tabs[14]:
+    st.subheader("Talent & Skills")
+    try:
+        skill_payload = api_v1_get("/analytics/skill-gap?limit=40")
+        skill_df = records_df(skill_payload, "technologies")
+        if not plotly_empty_notice(skill_df, "No skill gap analytics are available from PostgreSQL."):
+            st.plotly_chart(
+                px.scatter(
+                    skill_df,
+                    x="developer_supply",
+                    y="job_demand",
+                    size="avg_salary",
+                    color="gap_severity",
+                    hover_name="name",
+                    title="Skill demand vs supply gap",
+                ),
+                use_container_width=True,
+            )
+            st.dataframe(skill_df, use_container_width=True, hide_index=True)
+    except Exception as exc:
+        render_analytics_error(exc)
+
+with tabs[15]:
+    st.subheader("Forecasts")
+    try:
+        forecast_payload = api_v1_get("/analytics/forecast-leaderboards?period=6_months&limit=15")
+        if not show_unavailable(forecast_payload):
+            gainers = pd.DataFrame(forecast_payload.get("biggest_gainers_predicted", []))
+            losers = pd.DataFrame(forecast_payload.get("biggest_losers_predicted", []))
+            left, right = st.columns(2)
+            with left:
+                if not gainers.empty:
+                    st.plotly_chart(px.bar(gainers, x="name", y="growth_projection", color="confidence", title="Predicted gainers"), use_container_width=True)
+                    st.dataframe(gainers, use_container_width=True, hide_index=True)
+            with right:
+                if not losers.empty:
+                    st.plotly_chart(px.bar(losers, x="name", y="growth_projection", color="confidence", title="Predicted decliners"), use_container_width=True)
+                    st.dataframe(losers, use_container_width=True, hide_index=True)
+    except Exception as exc:
+        render_analytics_error(exc)
+
+with tabs[16]:
+    st.subheader("Events")
+    try:
+        event_payload = api_v1_get("/analytics/events-timeline?days=90")
+        event_df = records_df(event_payload, "events")
+        if not plotly_empty_notice(event_df, "No market-event records are available from PostgreSQL."):
+            event_df["date"] = pd.to_datetime(event_df["date"], errors="coerce")
+            st.plotly_chart(
+                px.scatter(event_df, x="date", y="impact", size="discussion_count", hover_name="title", color="source", title="Market events and sentiment shifts"),
+                use_container_width=True,
+            )
+            st.dataframe(event_df, use_container_width=True, hide_index=True)
+    except Exception as exc:
+        render_analytics_error(exc)
+
+with tabs[17]:
+    st.subheader("Tech Deep Dive")
+    try:
+        growth_payload = api_v1_get("/analytics/growth-matrix?limit=100")
+        tech_options_df = records_df(growth_payload, "technologies")
+        options = tech_options_df["name"].dropna().tolist() if not tech_options_df.empty and "name" in tech_options_df.columns else []
+        selected_name = st.selectbox("Technology", options=options, key="deep_dive_select") if options else ""
+        typed_name = st.text_input("Or type technology name", value="", key="deep_dive_typed").strip()
+        tech_name = typed_name or selected_name
+        if tech_name:
+            encoded_name = quote(tech_name, safe="")
+            detail_payload = api_v1_get(f"/technology/{encoded_name}/detail")
+            if not show_unavailable(detail_payload):
+                metric_cards(
+                    [
+                        ("Popularity", detail_payload.get("current_metrics", {}).get("popularity_score")),
+                        ("Growth", detail_payload.get("current_metrics", {}).get("growth_rate")),
+                        ("Volatility", detail_payload.get("current_metrics", {}).get("volatility")),
+                        ("Avg salary", detail_payload.get("current_metrics", {}).get("avg_salary")),
+                    ],
+                    columns=4,
+                )
+                st.dataframe(pd.DataFrame([detail_payload.get("market_position", {})]), use_container_width=True, hide_index=True)
+
+            ts_payload = api_v1_get(f"/technology/{encoded_name}/timeseries?days=90&metrics=popularity,growth,hiring,salary")
+            ts_df = records_df(ts_payload, "data")
+            if not ts_df.empty:
+                ts_df["date"] = pd.to_datetime(ts_df["date"], errors="coerce")
+                value_cols = [col for col in ["popularity", "growth", "hiring", "salary"] if col in ts_df.columns]
+                st.plotly_chart(px.line(ts_df, x="date", y=value_cols, title=f"{tech_name} time series"), use_container_width=True)
+
+            regional_payload = api_v1_get(f"/technology/{encoded_name}/regional-comparison")
+            regions = regional_payload.get("regions", {}) if regional_payload else {}
+            if regions:
+                region_df = pd.DataFrame([{"region": key, **val} for key, val in regions.items()])
+                st.markdown("**Regional comparison**")
+                st.dataframe(region_df, use_container_width=True, hide_index=True)
+
+            combos_payload = api_v1_get(f"/technology/{encoded_name}/skill-combinations")
+            combos_df = records_df(combos_payload, "top_combinations")
+            if not combos_df.empty:
+                st.markdown("**Skill combinations**")
+                st.dataframe(combos_df, use_container_width=True, hide_index=True)
+    except Exception as exc:
+        render_analytics_error(exc)
 
 if auto_refresh and running:
     time.sleep(3)

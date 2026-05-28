@@ -16,8 +16,10 @@ import joblib
 import numpy as np
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.cluster import KMeans
+from sklearn.ensemble import IsolationForest, RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import classification_report, confusion_matrix, mean_absolute_error, r2_score
+from sklearn.preprocessing import StandardScaler
 
 try:
     from sklearn.model_selection import train_test_split
@@ -126,6 +128,139 @@ class ModelTrainer:
         dataset = pd.concat(rows, ignore_index=True)
         return dataset
 
+    def _clean_json(self, value: Any) -> Any:
+        if isinstance(value, dict):
+            return {str(k): self._clean_json(v) for k, v in value.items()}
+        if isinstance(value, (list, tuple, set)):
+            return [self._clean_json(v) for v in value]
+        if isinstance(value, (pd.Timestamp, datetime)):
+            return value.isoformat()
+        if isinstance(value, np.ndarray):
+            return value.tolist()
+        if isinstance(value, np.generic):
+            return value.item()
+        try:
+            if pd.isna(value):
+                return None
+        except Exception:
+            pass
+        if isinstance(value, float) and (np.isnan(value) or np.isinf(value)):
+            return None
+        return value
+
+    def _write_dashboard_artifacts(
+        self,
+        df_sorted: pd.DataFrame,
+        feature_cols: list[str],
+        importances: dict[str, float] | None,
+        timestamp: str,
+    ) -> dict[str, Any]:
+        artifacts: dict[str, Any] = {}
+
+        try:
+            if importances:
+                enriched = [
+                    {
+                        "feature": feature,
+                        "importance": float(score),
+                        "metric_family": feature.split("_")[0] if "_" in feature else "general",
+                    }
+                    for feature, score in sorted(importances.items(), key=lambda item: item[1], reverse=True)
+                ]
+                path = self.artifacts_dir / f"feature_importances_enriched_{timestamp}.json"
+                path.write_text(json.dumps(self._clean_json(enriched), indent=2), encoding="utf-8")
+                artifacts["enriched_feature_importances_path"] = str(path)
+        except Exception:
+            logger.exception("Failed to write enriched feature importances")
+
+        salary_target = next(
+            (
+                column
+                for column in ["salary_7d_mean", "avg_salary_senior", "avg_salary_mid", "avg_salary"]
+                if column in df_sorted.columns and pd.to_numeric(df_sorted[column], errors="coerce").fillna(0).gt(0).sum() > 20
+            ),
+            None,
+        )
+        if salary_target:
+            try:
+                salary_features = [
+                    col
+                    for col in feature_cols
+                    if col != salary_target and "salary" not in col.lower() and is_numeric_dtype(df_sorted[col])
+                ]
+                salary_frame = df_sorted[salary_features + [salary_target]].replace([np.inf, -np.inf], np.nan).dropna(subset=[salary_target])
+                if len(salary_frame) > 50 and salary_features:
+                    salary_cutoff = max(1, min(int(len(salary_frame) * 0.8), len(salary_frame) - 1))
+                    X_salary = salary_frame[salary_features].fillna(0)
+                    y_salary = pd.to_numeric(salary_frame[salary_target], errors="coerce").fillna(0)
+                    salary_model = RandomForestRegressor(
+                        n_estimators=getattr(settings, "ML_RANDOM_FOREST_ESTIMATORS", 100),
+                        random_state=42,
+                        n_jobs=-1,
+                        min_samples_leaf=2,
+                    )
+                    salary_model.fit(X_salary.iloc[:salary_cutoff], y_salary.iloc[:salary_cutoff])
+                    salary_preds = salary_model.predict(X_salary.iloc[salary_cutoff:])
+                    salary_metrics = {
+                        "target_variable": salary_target,
+                        "training_rows": int(salary_cutoff),
+                        "testing_rows": int(len(salary_frame) - salary_cutoff),
+                        "feature_count": int(len(salary_features)),
+                        "mae": float(mean_absolute_error(y_salary.iloc[salary_cutoff:], salary_preds)),
+                        "r2": float(r2_score(y_salary.iloc[salary_cutoff:], salary_preds)) if len(salary_preds) > 1 else None,
+                    }
+                    model_path = self.model_dir / f"salary_model_{timestamp}.joblib"
+                    metrics_path = self.artifacts_dir / f"salary_metrics_{timestamp}.json"
+                    joblib.dump({"model": salary_model, "feature_columns": salary_features, "target": salary_target}, model_path)
+                    metrics_path.write_text(json.dumps(self._clean_json(salary_metrics), indent=2), encoding="utf-8")
+                    artifacts["salary_model_path"] = str(model_path)
+                    artifacts["salary_metrics_path"] = str(metrics_path)
+                    artifacts["salary_metrics"] = salary_metrics
+            except Exception:
+                logger.exception("Failed to write salary regression artifacts")
+
+        try:
+            latest = df_sorted.sort_values(["date", "tech"]).groupby("tech", as_index=False).tail(1)
+            usable_cols = [
+                col
+                for col in feature_cols
+                if col in latest.columns and is_numeric_dtype(latest[col]) and latest[col].nunique(dropna=True) > 1
+            ]
+            if len(latest) >= 4 and usable_cols:
+                X_latest = latest[usable_cols].replace([np.inf, -np.inf], 0).fillna(0)
+                X_scaled = StandardScaler().fit_transform(X_latest)
+                cluster_count = min(6, max(2, int(np.sqrt(len(latest)))))
+                labels = KMeans(n_clusters=cluster_count, random_state=42, n_init=10).fit_predict(X_scaled)
+                cluster_rows = [
+                    {"tech": tech, "cluster": int(label)}
+                    for tech, label in zip(latest["tech"].astype(str).tolist(), labels.tolist())
+                ]
+                cluster_path = self.artifacts_dir / f"technology_clusters_{timestamp}.json"
+                cluster_path.write_text(json.dumps(cluster_rows, indent=2), encoding="utf-8")
+                artifacts["technology_clusters_path"] = str(cluster_path)
+
+                if len(latest) >= 20:
+                    anomaly = IsolationForest(contamination=0.08, random_state=42).fit(X_scaled)
+                    anomaly_rows = [
+                        {
+                            "tech": tech,
+                            "anomaly_score": float(score),
+                            "is_anomaly": bool(flag == -1),
+                        }
+                        for tech, score, flag in zip(
+                            latest["tech"].astype(str).tolist(),
+                            anomaly.decision_function(X_scaled).tolist(),
+                            anomaly.predict(X_scaled).tolist(),
+                        )
+                    ]
+                    anomaly_path = self.artifacts_dir / f"trend_reversal_anomalies_{timestamp}.json"
+                    anomaly_path.write_text(json.dumps(anomaly_rows, indent=2), encoding="utf-8")
+                    artifacts["trend_reversal_anomalies_path"] = str(anomaly_path)
+        except Exception:
+            logger.exception("Failed to write clustering/anomaly artifacts")
+
+        return artifacts
+
     def train(self, horizon_days: int = 7, run_id: str | None = None):
         df = self.build_dataset(horizon_days=horizon_days)
         if df.empty:
@@ -141,6 +276,10 @@ class ModelTrainer:
             return None
 
         df_sorted = df.sort_values(["date", "tech"]).reset_index(drop=True)
+        max_training_rows = int(getattr(settings, "ML_MAX_TRAINING_ROWS", 0) or 0)
+        if max_training_rows > 0 and len(df_sorted) > max_training_rows:
+            logger.info("Limiting ML training dataset from %s to latest %s rows", len(df_sorted), max_training_rows)
+            df_sorted = df_sorted.tail(max_training_rows).reset_index(drop=True)
         X = df_sorted[feature_cols].fillna(0)
         y = df_sorted["trend_label"]
         y_growth = pd.to_numeric(df_sorted["future_growth_pct"], errors="coerce").replace([np.inf, -np.inf], 0).fillna(0)
@@ -148,10 +287,14 @@ class ModelTrainer:
         # time-series cross-validation (expanding window)
         results = {}
         cv_results = {}
-        def _time_series_cv_estimate(model_cls, name, n_splits=3):
+        def _time_series_cv_estimate(model_cls, name, n_splits: int | None = None):
             accs = []
             folds = []
-            n = len(df)
+            n = len(X)
+            if n_splits is None:
+                n_splits = int(getattr(settings, "ML_CV_SPLITS", 3) or 0)
+            if n_splits <= 0:
+                return {"accuracy": None, "folds": folds, "skipped": True}
             if n < 10:
                 return {"accuracy": None}
             for i in range(1, n_splits + 1):
@@ -178,6 +321,13 @@ class ModelTrainer:
             return {"accuracy": None, "folds": folds}
 
         rf_estimators = getattr(settings, "ML_RANDOM_FOREST_ESTIMATORS", 100)
+        logger.info(
+            "Training RandomForest models with estimators=%s cv_splits=%s rows=%s features=%s",
+            rf_estimators,
+            getattr(settings, "ML_CV_SPLITS", 3),
+            len(df_sorted),
+            len(feature_cols),
+        )
 
         # baseline: RandomForest
         rf = RandomForestClassifier(n_estimators=rf_estimators, random_state=42, n_jobs=-1)
@@ -293,6 +443,7 @@ class ModelTrainer:
             "holdout_confidence": proba_vals,
             "model_path": str(model_path),
         }
+        metrics.update(self._write_dashboard_artifacts(df_sorted, feature_cols, importances, timestamp))
         metrics_path = self.artifacts_dir / f"metrics_{timestamp}.json"
         try:
             metrics_path.write_text(json.dumps(metrics, indent=2))
